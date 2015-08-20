@@ -1,10 +1,10 @@
 /**
- * 
+ *
  */
 package com.vmturbo.NS;
 
 /**
- * @author kunal, shangshang
+ * @author kunal, shangshang, pamela
  *
  */
 public class SimulatorMain {
