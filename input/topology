@@ -1,0 +1,3 @@
+lfsw1; tor; 1; spsw; h1
+lfsw2; tor; 1; spsw; h2
+spsw; spine; 40; ; lfsw1, lfsw2
