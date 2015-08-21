@@ -30,12 +30,27 @@ public class Path {
     }
 
     /**
-     * needs implementation and locks
+     * needs locks?
      * @param flow
      * @return 
      */
     public int getQuote(Flow flow) {
-        return 0;
+        //"demand" is the bandwidth demand of the flow
+        double demand = (double)flow.getSize() / (double)flow.getDuration();
+
+        //quote of the path is the sum of link prices
+        //link price is calculated as 1/(1-U)^2
+        int quote = 0;
+        for (Link link : links) {
+            double bandwidthLeft = link.getCapacity() - link.getUtilization();
+            if (demand >= bandwidthLeft) {
+                return -1;
+            }
+            double percentage = (demand + link.getUtilization()) /
+                                link.getCapacity();
+            quote += 1 / Math.pow(1 - percentage, 2);
+        }
+        return quote;
     }
 
     /**
@@ -45,6 +60,10 @@ public class Path {
      */
     public int sell(Flow flow) {
         return 0;
+    }
+
+    public static void main(String[] args) {
+        System.out.println(1 / Math.pow());
     }
 
 }

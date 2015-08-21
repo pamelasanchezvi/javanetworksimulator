@@ -41,7 +41,7 @@ public class ECMP {
                 return path;
             }
             else {
-                System.out.println("selling failed btw: \n" +
+                System.out.println("selling failed between: \n" +
                                    flow.getAllInfo() +
                                    path.getAllInfo());
                 return null;

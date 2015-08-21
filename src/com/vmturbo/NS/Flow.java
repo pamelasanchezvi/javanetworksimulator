@@ -10,13 +10,14 @@ public class Flow {
     int size; //total bytes of the flow
     int budget; // the budge the flow has, in virtual dollars
 
-    public Flow(Host source, Host dest, int start, int duration, int size, int budget) {
+    //constructor: assuming infinite budget right now
+    public Flow(Host source, Host dest, int start, int duration, int size /*, int budget*/) {
         this.source = source;
         this.dest = dest;
         this.start = start;
         this.duration = duration;
         this.size = size;
-        this.budget = budget;
+        this.budget = Integer.MAX_VALUE;
     }
 
     public Host getSource() {
@@ -59,9 +60,12 @@ public class Flow {
                 + "s; "
                 + size
                 + " bytes; "
+                /**
                 + budget
-                + " $\n");
-    }
+                + " $;" 
+                */
+                + "\n");
+            }
 
     /** for testing purpose
     public static void main(String[] args) {
