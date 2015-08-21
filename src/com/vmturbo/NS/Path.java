@@ -5,11 +5,11 @@ import java.util.ArrayList;
 public class Path {
 
     Host source;
-    ArrayList<Switch> switches;
+    ArrayList<Link> links;
     Host dest;
 
-    public Path(Host source, Host dest, ArrayList<Switch> switches) {
-        this.switches = switches;
+    public Path(Host source, Host dest, ArrayList<Link> links) {
+        this.links = links;
         this.source = source;
         this.dest = dest;
     }
