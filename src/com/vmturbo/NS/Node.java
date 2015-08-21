@@ -15,7 +15,7 @@ public abstract class Node {
 		return name;
 	}
 	
-	public void setName(String hostname){
-		this.name = hostname;
+	public void setName(String nodeName){
+		this.name = nodeName;
 	}
 }

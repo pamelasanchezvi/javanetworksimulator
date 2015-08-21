@@ -18,7 +18,7 @@ public class Host extends Node {
 		this.torList = torList;
 	}
 	
-	public ArrayList<ToRSwitch> getToR(){
+	public ArrayList<ToRSwitch> getToRSwitch(){
 		return torList;
 	}
 	
@@ -40,12 +40,12 @@ public class Host extends Node {
 			torList.remove(torSwitch);
 		}
 	}
-	
+	/*
 	public static void main(String[] args){
 		Host host = new Host("testhost", null);
 		ToRSwitch torsw = null;
 		host.addtorSwitch(torsw);
 		
 	}
-	
+	*/
 }

@@ -23,6 +23,9 @@ public class SpineSwitch extends Node {
 	}
 	
 	public void addtorSwitch(ToRSwitch torSwitch){
+		if(torSwitch == null){
+			return;
+		}
 		if(torList.contains(torSwitch)){
 			return;
 		}
@@ -30,6 +33,9 @@ public class SpineSwitch extends Node {
 	}
 	
 	public void removetorSwitch(ToRSwitch torSwitch){
+		if(torSwitch == null){
+			return;
+		}
 		if(torList.contains(torSwitch)){
 			torList.remove(torSwitch);
 		}

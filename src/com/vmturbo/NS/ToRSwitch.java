@@ -29,6 +29,9 @@ public class ToRSwitch extends Node {
 	}
 	
 	public void addHost(Host host){
+		if(host == null){
+			return;
+		}
 		if(hostList.contains(host)){
 			return;
 		}
@@ -36,6 +39,9 @@ public class ToRSwitch extends Node {
 	}
 	
 	public void addSpine(SpineSwitch spSwitch){
+		if(spSwitch == null){
+			return;
+		}
 		if(spineList.contains(spSwitch)){
 			return;
 		}
@@ -43,12 +49,18 @@ public class ToRSwitch extends Node {
 	}
 	
 	public void removeHost(Host host){
+		if(host == null){
+			return;
+		}
 		if(hostList.contains(host)){
 			hostList.remove(host);
 		}
 	}
 	
 	public void removeSpine(SpineSwitch spSwitch){
+		if(spSwitch == null){
+			return;
+		}
 		if(spineList.contains(spSwitch)){
 			spineList.remove(spSwitch);
 		}
