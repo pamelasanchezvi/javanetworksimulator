@@ -1,3 +1,6 @@
+/**
+ * @author shangshangchen
+ */
 package com.vmturbo.NS;
 
 import java.util.ArrayList;
@@ -22,6 +25,22 @@ public class Path {
         return dest;
     }
 
+    /**
+     * needs implementation and locks
+     * @param flow
+     * @return 
+     */
+    public int getQuote(Flow flow) {
+        return 0;
+    }
 
+    /**
+     * needs implementation and locks
+     * @param flow
+     * @return 0 if successful, -1 unsuccessful
+     */
+    public int sell(Flow flow) {
+        return 0;
+    }
 
 }

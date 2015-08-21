@@ -1,42 +1,38 @@
+/**
+ * @author shangshangchen
+ */
 package com.vmturbo.NS;
 
 public class Flow {
 
-    String sourceIP, destIP;
-    int sourcePort, destPort;
-    String protocol;
+    Host source, dest;
+    int start, duration; //in seconds
     int size; //total bytes of the flow
     int budget; // the budge the flow has, in virtual dollars
 
-    public Flow(String sourceIP, String destIP, int sourcePort, int destPort,
-                    String protocol, int size, int budget) {
-        this.sourceIP = sourceIP;
-        this.destIP = destIP;
-        this.sourcePort = sourcePort;
-        this.destPort = destPort;
-        this.protocol = protocol;
+    public Flow(Host source, Host dest, int start, int duration, int size, int budget) {
+        this.source = source;
+        this.dest = dest;
+        this.start = start;
+        this.duration = duration;
         this.size = size;
         this.budget = budget;
     }
 
-    public String getSourceIP() {
-        return sourceIP;
+    public Host getSource() {
+        return source;
     }
 
-    public String getDestIP() {
-        return destIP;
+    public Host getDest() {
+        return dest;
     }
 
-    public int getSourcePort() {
-        return sourcePort;
+    public int getStart() {
+        return start;
     }
 
-    public int getDestPort() {
-        return destPort;
-    }
-
-    public String getProtocol() {
-        return protocol;
+    public int getDuration() {
+        return duration;
     }
 
     public int getSize() {
