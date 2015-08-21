@@ -62,8 +62,10 @@ public class Path {
         return 0;
     }
 
+    /** testing
     public static void main(String[] args) {
-        System.out.println(1 / Math.pow());
+        
     }
+    */
 
 }
