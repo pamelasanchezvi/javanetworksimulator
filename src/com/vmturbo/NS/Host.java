@@ -9,9 +9,8 @@ import java.util.ArrayList;
  * @author kunal
  *
  */
-public class Host {
+public class Host extends Node {
 
-	String name;
 	ArrayList<ToRSwitch> torList; 
 	
 	public Host(String name, ArrayList<ToRSwitch> torList){
@@ -19,19 +18,14 @@ public class Host {
 		this.torList = torList;
 	}
 	
-	public String getName(){
-		return name;
-	}
-	
 	public ArrayList<ToRSwitch> getToR(){
 		return torList;
 	}
 	
-	public void setName(String hostname){
-		this.name = hostname;
-	}
-	
 	public void addtorSwitch(ToRSwitch torSwitch){
+		if(torSwitch == null){
+			return;
+		}
 		if(torList.contains(torSwitch)){
 			return;
 		}
@@ -39,9 +33,19 @@ public class Host {
 	}
 	
 	public void removetorSwitch(ToRSwitch torSwitch){
+		if(torSwitch == null){
+			return;
+		}
 		if(torList.contains(torSwitch)){
 			torList.remove(torSwitch);
 		}
+	}
+	
+	public static void main(String[] args){
+		Host host = new Host("testhost", null);
+		ToRSwitch torsw = null;
+		host.addtorSwitch(torsw);
+		
 	}
 	
 }

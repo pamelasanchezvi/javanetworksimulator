@@ -9,9 +9,8 @@ import java.util.ArrayList;
  * @author kunal
  *
  */
-public class ToRSwitch {
+public class ToRSwitch extends Node {
 
-	String name;
 	ArrayList<Host> hostList;
 	ArrayList<SpineSwitch> spineList;
 	
@@ -21,20 +20,12 @@ public class ToRSwitch {
 		this.spineList = spineList;
 	}
 	
-	public String getName(){
-		return name;
-	}
-	
 	public ArrayList<Host> getHostList(){
 		return hostList;
 	}
 	
 	public ArrayList<SpineSwitch> getSpineList(){
 		return spineList;
-	}
-	
-	public void setName(String name){
-		this.name = name;
 	}
 	
 	public void addHost(Host host){
