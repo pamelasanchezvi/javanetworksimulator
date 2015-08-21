@@ -35,6 +35,10 @@ public class Flow {
         return duration;
     }
 
+    public int getEnd() {
+        return start + duration;
+    }
+
     public int getSize() {
         return size;
     }
@@ -43,5 +47,28 @@ public class Flow {
         return budget;
     }
 
+    public String getAllInfo() {
+        return ("flow: "
+                + source.getName()
+                + " -> "
+                + dest.getName()
+                + "; "
+                + getStart()
+                + "s -> "
+                + getEnd()
+                + "s; "
+                + size
+                + " bytes; "
+                + budget
+                + " $\n");
+    }
 
+    /** for testing purpose
+    public static void main(String[] args) {
+        Host h1 = new Host("h1", null);
+        Host h2 = new Host("h2", null);
+        Flow f = new Flow(h1, h2, 0, 20, 1000, 100);
+        
+    }
+    */
 }

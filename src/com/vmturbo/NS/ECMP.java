@@ -6,10 +6,14 @@ package com.vmturbo.NS;
 import java.util.ArrayList;
 import java.util.Random;
 
+
 public class ECMP {
 
     /**
-     * ECMP 
+     * ECMP supposedly uses a hash function to randomly choose a next-hop among \ 
+     * multiple equally best next-hops. But we don't know about hashing functions \
+     * can achieve uniform randomness, so we just use random number generator here.
+     * 
      * @param flow: the flow that needs placement
      * @param allPaths: a list of all paths in the network, regardless of usage
      * @return: a randomly chosen path  
@@ -26,6 +30,7 @@ public class ECMP {
         }
 
         if (paths.isEmpty()) {
+            System.out.println("no matching path exists for " + flow.getAllInfo());
             return null;
         }
         else { // choose a random path
@@ -36,9 +41,11 @@ public class ECMP {
                 return path;
             }
             else {
+                System.out.println("selling failed btw: \n" +
+                                   flow.getAllInfo() +
+                                   path.getAllInfo());
                 return null;
             }
-
         }
     }
 

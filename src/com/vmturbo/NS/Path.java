@@ -25,6 +25,10 @@ public class Path {
         return dest;
     }
 
+    public String getAllInfo() {
+        return ("path: " + source.getName() + " -> " + dest.getName() + "\n");
+    }
+
     /**
      * needs implementation and locks
      * @param flow
