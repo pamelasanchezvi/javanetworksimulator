@@ -24,11 +24,13 @@ public class EconomicPlacement {
             }
         }
 
-        if (paths.isEmpty()) { // i.e. no matching path
+        //if no matching path exists
+        if (paths.isEmpty()) {
             System.out.println("no matching path exists for " + flow.getAllInfo());
             return null;
         }
 
+        //find cheapest path
         int minQuote = Integer.MAX_VALUE;
         int pathNo = 0;
         for (int i = 0; i < paths.size(); i++) {
@@ -39,13 +41,15 @@ public class EconomicPlacement {
             }
         }
 
+        //check if flow has enough budget for the cheapest path
         if (flow.getBudget() >= minQuote) {
             Path path = paths.get(pathNo);
-            if (path.sell(flow) == 0) {
+            //not sure if the actual placement act should be carried out here
+            if (path.placeFlow(flow) == 0) {
                 return path;
             }
             else {
-                System.out.println("selling failed btw: \n" +
+                System.out.println("selling failed between: \n" +
                                    flow.getAllInfo() +
                                    path.getAllInfo());
                 return null;

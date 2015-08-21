@@ -37,7 +37,8 @@ public class ECMP {
             Random rand = new Random();
             int n = rand.nextInt(paths.size());
             Path path = paths.get(n);
-            if (path.sell(flow) == 0) { //if selling is successful
+            //not sure if the actual placement act should be carried out here
+            if (path.placeFlow(flow) == 0) { //if selling is successful
                 return path;
             }
             else {
