@@ -22,16 +22,23 @@ public class TopologySetup {
     String switchname;
     String switchType;
     String neighborsLine;
-    Integer capaciy;
+    String nextcapacity;
     String linkStr;
+    String nextNeighbor;
 
-
+    private static TopologySetup topoSetup = new TopologySetup();
     String line = null;
 
-    public TopologySetup(String fileToOpen){
-        this.fileName = fileToOpen;
+    private TopologySetup(){}
 
+    public void setTopologyFileName(String fileToOpen){
+        this.fileName = fileToOpen;
     }
+
+    public TopologySetup getInstance(){
+        return topoSetup;
+    }
+
 // #switch name; type of switch; neighbor1, link capacity |  neighbor2, link capacity | ...
     public void parseFile(){
         try {
@@ -46,12 +53,8 @@ public class TopologySetup {
                     neighborsLine = str.nextToken();
                 }
                 // error if name , type or neighbors line was null?
-                delims = "|";
-                str = new StringTokenizer(neighborsLine, delims);
-                while(str.hasMoreElements()){
-                    linkStr = str.nextToken();
+                initSwitches(neighborsLine, switchType, switchname);
 
-                }
             }
              bufferedReader.close();
         }
@@ -61,10 +64,54 @@ public class TopologySetup {
         }
     }
 
-    private void initSwitches(String linkPair){
-        String delim = ",";
-        StringTokenizer tk = new StringTokenizer(linkPair, delim);
-        tk.nextToken();
+    private void initSwitches(String linkPairs, String srcType, String srcName){
+        // linkPair format is : " neighbor1, link capacity "
+        switch (srcType) {
+            case "spine":
+                SpineSwitch newspine = new SpineSwitch(srcName);
+                // look for neighbors
+                parseNeighbors(linkPairs, newspine);
+            case "tor":
+
+                break;
+
+            default:
+                break;
+        }
     }
+
+    private void parseNeighbors(String linkp, SpineSwitch spswitch) {
+
+        String delims = "|";
+        StringTokenizer str = new StringTokenizer(neighborsLine, delims);
+        while(str.hasMoreElements()){
+            linkStr = str.nextToken();
+            // here we pass String of format : " neighbor1, link capacity " to function
+            // this is for each neighbor
+            String delim = ",";
+            StringTokenizer tk = new StringTokenizer(linkStr, delim);
+            nextNeighbor = tk.hasMoreTokens() ? tk.nextToken() : null;
+            nextcapacity = tk.hasMoreTokens() ? tk.nextToken() : null;
+            Double capacity =  Double.parseDouble(nextcapacity);
+            // then we create link between switchname and nextNeighbor
+            ToRSwitch nextTor = new ToRSwitch(nextNeighbor);
+            Link newlink = new Link(spswitch, nextTor, capacity, 0.0);
+        }
+
+
+
+    }
+
+    public Host getHost(String hostName){
+        for (Host host: hostList){
+            if (host.getName().equals(hostName)){
+                return host;
+            }
+        }
+        return null;
+    }
+
+
+
     // populate the list of hosts, list of , arraylist of spineswitches
 }
