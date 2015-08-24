@@ -13,9 +13,9 @@ public class Host extends Node {
 
 	private ArrayList<ToRSwitch> torList; 
 	
-	public Host(String name, ArrayList<ToRSwitch> torList){
+	public Host(String name){
 		this.name = name;
-		this.torList = torList;
+		this.torList = new ArrayList<ToRSwitch>();
 	}
 	
 	public ArrayList<ToRSwitch> getToRSwitch(){

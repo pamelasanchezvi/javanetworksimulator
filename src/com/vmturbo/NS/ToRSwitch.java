@@ -14,10 +14,10 @@ public class ToRSwitch extends Node {
 	private ArrayList<Host> hostList;
 	private ArrayList<SpineSwitch> spineList;
 	
-	public ToRSwitch(String name, ArrayList<Host> hostList, ArrayList<SpineSwitch> spineList){
+	public ToRSwitch(String name){
 		this.name = name;
-		this.hostList = hostList;
-		this.spineList = spineList;
+		this.hostList = new ArrayList<Host>();
+		this.spineList = new ArrayList<SpineSwitch>();
 	}
 	
 	public ArrayList<Host> getHostList(){
