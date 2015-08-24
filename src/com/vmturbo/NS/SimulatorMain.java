@@ -35,8 +35,20 @@ public class SimulatorMain {
         FlowQueueSetup queue = new FlowQueueSetup(QUEUEFILE);
         queue.populateQueue();
         simulator.flowQueue = queue.getFlowQueue();
-        
-        
+       
+        // compute all the paths
+        ComputePaths comPaths = new ComputePaths(topo.spineList, topo.torList, topo.hostList, topo.linkList);
+        comPaths.findPaths();
+        ArrayList<Path> allPaths;
+       
+        // find ECMP placement
+        for(Flow flow : simulator.flowQueue){
+        	allPaths = comPaths.getPaths(flow.source, flow.dest);
+        	if(allPaths.isEmpty()){
+        		System.err.println("No path found for flow: source: " + flow.source + "\tdest:" + flow.dest);
+        	}
+        	ECMP.ECMPPlacement(flow, allPaths);
+        }
     }
 
 }
