@@ -97,4 +97,35 @@ public class FlowQueueSetup {
 		this.queueFileName = fileName;
 	}
 	
+	public static void main(String[] args){
+		// construct the topology
+		Host a = new Host("a");
+        Host b = new Host("b");
+        Host c = new Host("c");
+        ToRSwitch tor1 = new ToRSwitch("tor1");
+        ToRSwitch tor2 = new ToRSwitch("tor2");
+        tor1.addHost(a);
+        tor1.addHost(b);
+        tor2.addHost(c);
+        SpineSwitch spine = new SpineSwitch("spine");
+        spine.addtorSwitch(tor1);
+        spine.addtorSwitch(tor2);
+        Link l1 = new Link(a, tor1, 1, 0.5);
+        Link l2 = new Link(tor1, b, 1, 0.5);
+        Link l3 = new Link(tor1, spine, 10, 2);
+        Link l4 = new Link(spine, tor2, 10, 2);
+        Link l5 = new Link(tor2, c, 1, 0.5);
+
+
+
+        ArrayList<Link> links1 = new ArrayList<Link>();
+        links1.add(l1);
+        links1.add(l2);
+
+        ArrayList<Link> links2 = new ArrayList<Link>();
+        links2.add(l1);
+        links2.add(l3);
+        links2.add(l4);
+        links2.add(l5);
+	}
 }
