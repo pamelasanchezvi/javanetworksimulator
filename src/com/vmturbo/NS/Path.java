@@ -7,9 +7,9 @@ import java.util.ArrayList;
 
 public class Path {
 
-    Host source;
-    ArrayList<Link> links;
-    Host dest;
+    private Host source;
+    private ArrayList<Link> links;
+    private Host dest;
 
     //constructor
     public Path(Host source, Host dest, ArrayList<Link> links) {
@@ -24,6 +24,10 @@ public class Path {
 
     public Host getDest() {
         return dest;
+    }
+
+    public ArrayList<Link> getLinks() {
+        return links;
     }
 
     @Override
@@ -46,9 +50,12 @@ public class Path {
      * used for economic placement
      * assuming we are not doing multi-threading, no need for locks
      * @param flow
-     * @return -1 if path can't satisfy flow demand, an integer quote otherwise
+     * @return -1 if path can't satisfy flow requirement, an integer quote otherwise
      */
     public int getQuote(Flow flow) {
+        if (!flow.getSource().equals(source) || !flow.getDest().equals(dest)) {
+            return -1;
+        }
         //"demand" is the bandwidth demand of the flow
         double demand = flow.getBandwidth();
 
@@ -74,10 +81,20 @@ public class Path {
      * @return 0 if successful, -1 unsuccessful
      */
     public int placeFlow(Flow flow) {
+        if (!flow.getSource().equals(source) || !flow.getDest().equals(dest)) {
+            return -1;
+        }
         double demand = flow.getBandwidth();
         for (Link link : links) {
-            //for now, just push everything into the link
-            link.setUtilization(Math.min(link.getCapacity(), link.getUtilization() + demand));
+            /**
+             * For now, just push everything into the link.
+             * Ideally, we should set utilization to be min(link.getCapacity(), link.getUtilization() + demand)
+             * but this approach might cause unequal addition and removal of bandwidths in 
+             * placeFlow() and removeFlow() .
+             * The current approach lets you set utilization above link capacity.
+             * So when polling link capacity, interpret accordingly
+             */
+            link.setUtilization(link.getUtilization() + demand);
         }
         return 0;
     }
@@ -88,6 +105,9 @@ public class Path {
      * @return 0 if successful, -1 unsuccessful
      */
     public int removeFlow(Flow flow) {
+        if (!flow.getSource().equals(source) || !flow.getDest().equals(dest)) {
+            return -1;
+        }
         double demand = flow.getBandwidth();
         for (Link link : links) {
             link.setUtilization(Math.max(0, link.getUtilization() - demand));
@@ -95,9 +115,10 @@ public class Path {
         return 0;
     }
 
-    ///** testing
+    /** testing
     public static void main(String[] args) {
 
+        //set up topology
         Host a = new Host("a");
         Host b = new Host("b");
         Host c = new Host("c");
@@ -111,8 +132,8 @@ public class Path {
         spine.addtorSwitch(tor2);
         Link l1 = new Link(a, tor1, 1, 0.5);
         Link l2 = new Link(tor1, b, 1, 0.5);
-        Link l3 = new Link(tor1, spine, 10, 2);
-        Link l4 = new Link(spine, tor2, 10, 2);
+        Link l3 = new Link(tor1, spine, 10, 0);
+        Link l4 = new Link(spine, tor2, 10, 0);
         Link l5 = new Link(tor2, c, 1, 0.5);
 
 
@@ -133,20 +154,49 @@ public class Path {
         ArrayList<Path> paths = new ArrayList<Path>();
         paths.add(p1);
         paths.add(p2);
+
         //test toString() 
         System.out.println(paths);
 
         //test getQuote()
-        Flow f1 = new Flow(a, b, 0, 10, 0.1); //should print 12
-        System.out.println(p1.getQuote(f1));
-        Flow f2 = new Flow(a, b, 0, 10, 0.4); //should print 200
-        System.out.println(p1.getQuote(f2));
-        Flow f3 = new Flow(a, b, 0, 10, 0.5); //should print -1
-        System.out.println(p1.getQuote(f3));
+        Flow f1 = new Flow(a, b, 0, 10, 0.1);
+        System.out.println(p1.getQuote(f1));  //should print 12
+        Flow f2 = new Flow(a, b, 0, 10, 0.4);
+        System.out.println(p1.getQuote(f2));  //should print 200
+        Flow f3 = new Flow(a, b, 0, 10, 0.7);
+        System.out.println(p1.getQuote(f3));  //should print -1
         Flow f4 = new Flow(a, c, 0, 10, 0.1);
-        System.out.println(p2.getQuote(f4));
+        System.out.println(p2.getQuote(f4));  //should print 14
+
+
+        //test placeFlow() and removeFlow()
+        System.out.println(l1.getUtilization());  //"0.5"
+        p1.placeFlow(f1);
+        System.out.println(l1.getUtilization());  //"0.6"
+        p1.removeFlow(f1);
+        System.out.println(l1.getUtilization());  //"0.5"
+
+        System.out.println(l1.getUtilization());  //"0.5"
+        p1.placeFlow(f3);
+        System.out.println(l1.getUtilization());  //"1.2"
+        p1.removeFlow(f3);
+        System.out.println(l1.getUtilization());  //"0.5"
+
+        System.out.println(l3.getUtilization());  //"0.0"
+        p2.placeFlow(f4);
+        System.out.println(l3.getUtilization());  //"0.1"
+        p2.removeFlow(f4);
+        System.out.println(l3.getUtilization());  //"0.0"
+
+
+
+        System.out.println(p1.getQuote(f4)); //"-1", since p1 doesn't match f4
+        System.out.println(p1.placeFlow(f4)); //"-1"
+        System.out.println(p1.removeFlow(f4)); //"-1"
+
+
 
     }
-    //*/
+    */
 
 }
