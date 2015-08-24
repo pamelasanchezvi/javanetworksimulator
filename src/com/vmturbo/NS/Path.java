@@ -30,6 +30,12 @@ public class Path {
         return links;
     }
 
+    public int getNumHops() {
+        if (links == null)
+            return 1;
+        return links.size();
+    }
+
     @Override
     public String toString() {
         if (links == null) {
