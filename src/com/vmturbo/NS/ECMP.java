@@ -30,7 +30,7 @@ public class ECMP {
         }
 
         if (paths.isEmpty()) {
-            System.out.println("no matching path exists for " + flow.getAllInfo());
+            System.out.println("no matching path exists for " + flow.toString());
             return null;
         }
         else { // choose a random path
@@ -43,8 +43,8 @@ public class ECMP {
             }
             else {
                 System.out.println("selling failed between: \n" +
-                                   flow.getAllInfo() +
-                                   path.getAllInfo());
+                                   flow.toString() + "\n" +
+                                   path.toString());
                 return null;
             }
         }

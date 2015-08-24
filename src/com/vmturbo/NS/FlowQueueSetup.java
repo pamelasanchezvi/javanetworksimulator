@@ -34,7 +34,7 @@ public class FlowQueueSetup {
 		Host destination;
 		int start;
 		int duration;
-		int size;
+		int bandwidth;
 		
 		try{
 			reader = new BufferedReader(new FileReader(queueFileName)); 
@@ -50,8 +50,8 @@ public class FlowQueueSetup {
 					duration = Integer.parseInt(flowData[1]);
 					source = TopologySetup.getInstance().getHost(flowData[2]);		// method should be implemented in TopologySetup
 					destination = TopologySetup.getInstance().getHost(flowData[3]);
-					size = Integer.parseInt(flowData[4]);
-					Flow flowToAdd = new Flow(source, destination, start, duration, size);
+					bandwidth = Integer.parseInt(flowData[4]);
+					Flow flowToAdd = new Flow(source, destination, start, duration, bandwidth);
 
 					// add Flow object to queue
 					addFlow(flowToAdd);

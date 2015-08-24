@@ -26,7 +26,7 @@ public class EconomicPlacement {
 
         //if no matching path exists
         if (paths.isEmpty()) {
-            System.out.println("no matching path exists for " + flow.getAllInfo());
+            System.out.println("no matching path exists for " + flow.toString());
             return null;
         }
 
@@ -50,14 +50,14 @@ public class EconomicPlacement {
             }
             else {
                 System.out.println("selling failed between: \n" +
-                                   flow.getAllInfo() +
-                                   path.getAllInfo());
+                                   flow.toString() + "\n" +
+                                   path.toString());
                 return null;
             }
         }
         else {
             System.out.println("not enough budget: \n" +
-                               flow.getAllInfo() +
+                               flow.toString() + "\n" +
                                "minimum Quote is " + minQuote + " \n");
             return null;
         }

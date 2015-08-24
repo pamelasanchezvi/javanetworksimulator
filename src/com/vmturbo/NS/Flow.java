@@ -7,16 +7,16 @@ public class Flow {
 
     Host source, dest;
     int start, duration; //in seconds
-    int size; //total bytes of the flow
+    int bandwidth; //total bytes of the flow
     int budget; // the budge the flow has, in virtual dollars
 
     //constructor: assuming infinite budget right now
-    public Flow(Host source, Host dest, int start, int duration, int size /*, int budget*/) {
+    public Flow(Host source, Host dest, int start, int duration, int bandwidth /*, int budget*/) {
         this.source = source;
         this.dest = dest;
         this.start = start;
         this.duration = duration;
-        this.size = size;
+        this.bandwidth = bandwidth;
         this.budget = Integer.MAX_VALUE;
     }
 
@@ -40,15 +40,16 @@ public class Flow {
         return start + duration;
     }
 
-    public int getSize() {
-        return size;
+    public int getBandwidth() {
+        return bandwidth;
     }
 
     public int getBudget() {
         return budget;
     }
 
-    public String getAllInfo() {
+    @Override
+    public String toString() {
         return ("flow: "
                 + source.getName()
                 + " -> "
@@ -58,7 +59,7 @@ public class Flow {
                 + "s -> "
                 + getEnd()
                 + "s; "
-                + size
+                + bandwidth
                 + " bytes; "
                 /**
                 + budget
@@ -69,8 +70,8 @@ public class Flow {
 
     /** for testing purpose
     public static void main(String[] args) {
-        Host h1 = new Host("h1", null);
-        Host h2 = new Host("h2", null);
+        Host h1 = new Host("h1");
+        Host h2 = new Host("h2");
         Flow f = new Flow(h1, h2, 0, 20, 1000, 100);
         
     }
