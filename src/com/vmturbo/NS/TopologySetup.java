@@ -72,7 +72,7 @@ public class TopologySetup {
                 // look for neighbors
                 parseNeighbors(linkPairs, newspine);
             case "tor":
-
+                ToRSwitch newtor = new ToRSwitch(srcName);
                 break;
 
             default:
