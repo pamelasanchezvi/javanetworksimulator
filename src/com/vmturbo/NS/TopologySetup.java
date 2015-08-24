@@ -35,7 +35,7 @@ public class TopologySetup {
         this.fileName = fileToOpen;
     }
 
-    public TopologySetup getInstance(){
+    public static TopologySetup getInstance(){
         return topoSetup;
     }
 

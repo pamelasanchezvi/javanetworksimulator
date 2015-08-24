@@ -48,17 +48,19 @@ public class FlowQueueSetup {
 					// construct Flow object
 					start = Integer.parseInt(flowData[0]);
 					duration = Integer.parseInt(flowData[1]);
-					source = getHost(flowData[2]);		// method should be implemented in TopologySetup
-					destination = getHost(flowData[3]);
+					source = TopologySetup.getInstance().getHost(flowData[2]);		// method should be implemented in TopologySetup
+					destination = TopologySetup.getInstance().getHost(flowData[3]);
 					size = Integer.parseInt(flowData[4]);
 					Flow flowToAdd = new Flow(source, destination, start, duration, size);
 
 					// add Flow object to queue
 					addFlow(flowToAdd);
 				} else {
+					reader.close();
 					throw new IllegalArgumentException();
 				}
 			}
+			reader.close();
 		} catch (IOException ioe){
 			System.err.println("Caught IOException: " + ioe.getMessage());
 		}
