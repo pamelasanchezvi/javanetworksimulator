@@ -11,7 +11,7 @@ import java.util.ArrayList;
  */
 public class Host extends Node {
 
-	ArrayList<ToRSwitch> torList; 
+	private ArrayList<ToRSwitch> torList; 
 	
 	public Host(String name, ArrayList<ToRSwitch> torList){
 		this.name = name;

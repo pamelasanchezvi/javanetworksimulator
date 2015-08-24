@@ -9,10 +9,10 @@ package com.vmturbo.NS;
  */
 public class Link {
 
-	Node srcNode;
-	Node destNode;
-	double capacity;
-	double utilization;
+	private Node srcNode;
+	private Node destNode;
+	private double capacity;
+	private double utilization;
 	
 	public Link(Node srcNode, Node destNode, double capacity, double utilization){
 		this.srcNode = srcNode;

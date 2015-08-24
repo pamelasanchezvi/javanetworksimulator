@@ -9,7 +9,7 @@ package com.vmturbo.NS;
  */
 public abstract class Node {
 
-	String name;
+	protected String name;
 	
 	public String getName(){
 		return name;

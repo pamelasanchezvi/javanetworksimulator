@@ -11,7 +11,7 @@ import java.util.ArrayList;
  */
 public class SpineSwitch extends Node {
 
-	ArrayList<ToRSwitch> torList;
+	private ArrayList<ToRSwitch> torList;
 	
 	public SpineSwitch(String name, ArrayList<ToRSwitch> torList){
 		this.name = name;
