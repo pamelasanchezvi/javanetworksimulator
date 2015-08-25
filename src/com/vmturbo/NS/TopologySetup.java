@@ -73,7 +73,7 @@ public class TopologySetup {
             FileReader filereader = new FileReader(fileName);
             BufferedReader bufferedReader = new BufferedReader(filereader);
             while((line = bufferedReader.readLine()) != null){
-                System.out.println("going line by line" + line);
+                //System.out.println("going line by line" + line);
                 String delims = ";";
                 StringTokenizer str = new StringTokenizer(line, delims);
                 while(str.hasMoreElements()){
@@ -81,7 +81,7 @@ public class TopologySetup {
                     switchType = str.nextToken().trim();
                     neighborsLine = str.nextToken().trim();
                 }
-                System.out.println("before initSwitches");
+                //System.out.println("before initSwitches");
                 // error if name , type or neighbors line was null?
                 initSwitches(neighborsLine, switchType, switchname);
 
@@ -119,26 +119,26 @@ public class TopologySetup {
     }
     private void initSwitches(String linkPairs, String srcType, String srcName){
         // linkPair format is : " neighbor1, link capacity "
-        System.out.println("initSwitches cases" + srcType);
+        //System.out.println("initSwitches cases" + srcType);
         switch (srcType) {
             case "spine":
-                System.out.println("case spine");
+                //System.out.println("case spine");
                 SpineSwitch newspine=null;
 
                 if ((newspine = spineSearch(srcName)) == null) {
                     newspine = new SpineSwitch(srcName);
-                    System.out.println("case spine adding");
+                    //System.out.println("case spine adding");
                     spineList.add(newspine);
                 }
                 // look for neighbors
                 parseSpineNeighbors(linkPairs, newspine);
                 break;
             case "tor":
-                System.out.println("case tor");
+                //System.out.println("case tor");
                 ToRSwitch newtor = null;
                 if ((newtor = torSearch(srcName)) == null) {
                     newtor = new ToRSwitch(srcName);
-                    System.out.println("case tor adding");
+                    //System.out.println("case tor adding");
                     torList.add(newtor);
                 }
                 parseLeafToRNeighbors(linkPairs, newtor);
