@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.vmturbo.NS.Flow;
 import com.vmturbo.NS.FlowQueueSetup;
 import com.vmturbo.NS.Host;
 import com.vmturbo.NS.Link;
@@ -23,6 +24,9 @@ import com.vmturbo.NS.TopologySetup;
  */
 public class FlowQueueSetupTest {
 
+	TopologySetup topo;
+	
+	
 	/**
 	 * @throws java.lang.Exception
 	 */
@@ -51,7 +55,7 @@ public class FlowQueueSetupTest {
         Link l4 = new Link(spine, tor2, 10, 2);
         Link l5 = new Link(tor2, c, 1, 0.5);
 
-        TopologySetup topo = TopologySetup.getInstance();
+        topo = TopologySetup.getInstance();
         topo.getHostList().add(a);
         topo.getHostList().add(b);
         topo.getHostList().add(c);
@@ -70,7 +74,14 @@ public class FlowQueueSetupTest {
 	 */
 	@Test
 	public void testPopulateQueue() {
-		fail("Not yet implemented");
+		System.out.println(System.getProperty("topology"));
+		String fileName = "../../../input/flowqueue";
+		FlowQueueSetup queueSetup = new FlowQueueSetup(fileName);
+		queueSetup.populateQueue();
+		ArrayList<Flow> queue = queueSetup.getFlowQueue();
+		assertEquals("test", queue.size(), 4);
+		
+		//fail("Not yet implemented");
 	}
 
 }

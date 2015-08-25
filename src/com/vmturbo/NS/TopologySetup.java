@@ -29,7 +29,12 @@ public class TopologySetup {
     private static TopologySetup topoSetup = new TopologySetup();
     String line = null;
 
-    private TopologySetup(){}
+    private TopologySetup(){
+    	spineList = new ArrayList<SpineSwitch>();
+    	torList = new ArrayList<ToRSwitch>();
+    	hostList = new ArrayList<Host>();
+    	linkList = new ArrayList<Link>();
+    }
 
     public void setTopologyFileName(String fileToOpen){
         this.fileName = fileToOpen;
