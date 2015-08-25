@@ -35,16 +35,22 @@ public class EconomicPlacement {
         int pathNo = 0;
         for (int i = 0; i < paths.size(); i++) {
             int quote = paths.get(i).getQuote(flow);
-            if (quote < minQuote) {
+            if (quote >= 0 && quote < minQuote) {//quote can be -1 if path can't accommodate flow
                 minQuote = quote;
                 pathNo = i;
             }
         }
+        /**if at the end, minQuote is still Integer.Max_Value, 
+         * it means that no path can accommodate the flow, 
+         * but we assume this won't happen. 
+         * Given that flow has infinite budget now, it will always be able to buy cheapest path
+         */
+
 
         //check if flow has enough budget for the cheapest path
         if (flow.getBudget() >= minQuote) {
             Path path = paths.get(pathNo);
-            //not sure if the actual placement act should be carried out here
+            //not sure if the actual placement should be carried out here
             if (path.placeFlow(flow) == 0) {
                 return path;
             }
@@ -58,10 +64,12 @@ public class EconomicPlacement {
         else {
             System.out.println("not enough budget: \n" +
                                flow.toString() + "\n" +
-                               "minimum Quote is " + minQuote + " \n");
+                               "minimum Quote is " + minQuote);
             return null;
         }
 
     }
+
+
 
 }

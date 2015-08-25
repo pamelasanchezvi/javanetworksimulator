@@ -184,29 +184,29 @@ public class ComputePaths {
         tor2.addSpine(spine2);
 
 
-        Link l1 = new Link(a, tor1, 1, 0);
-        Link l1r = new Link(tor1, a, 1, 0);
+        Link l1 = new Link(a, tor1, 1, 0, null);
+        Link l1r = new Link(tor1, a, 1, 0, null);
 
-        Link l2 = new Link(b, tor1, 1, 0);
-        Link l2r = new Link(tor1, b, 1, 0);
+        Link l2 = new Link(b, tor1, 1, 0.5, null);
+        Link l2r = new Link(tor1, b, 1, 0, null);
 
-        Link l3 = new Link(tor1, spine1, 10, 0);
-        Link l3r = new Link(spine1, tor1, 10, 0);
+        Link l3 = new Link(tor1, spine1, 10, 0, null);
+        Link l3r = new Link(spine1, tor1, 10, 6, null);
 
-        Link l4 = new Link(tor2, spine1, 10, 0);
-        Link l4r = new Link(spine1, tor2, 10, 0);
+        Link l4 = new Link(tor2, spine1, 10, 0, null);
+        Link l4r = new Link(spine1, tor2, 10, 0, null);
 
-        Link l5 = new Link(c, tor2, 1, 0);
-        Link l5r = new Link(tor2, c, 1, 0);
+        Link l5 = new Link(c, tor2, 1, 0, null);
+        Link l5r = new Link(tor2, c, 1, 0, null);
 
-        Link l6 = new Link(b, tor2, 1, 0);
-        Link l6r = new Link(tor2, b, 1, 0);
+        Link l6 = new Link(b, tor2, 1, 0, null);
+        Link l6r = new Link(tor2, b, 1, 0, null);
 
-        Link l7 = new Link(tor1, spine2, 10, 0);
-        Link l7r = new Link(spine2, tor1, 10, 0);
+        Link l7 = new Link(tor1, spine2, 10, 0, null);
+        Link l7r = new Link(spine2, tor1, 10, 0, null);
 
-        Link l8 = new Link(tor2, spine2, 10, 0);
-        Link l8r = new Link(spine2, tor2, 10, 0);
+        Link l8 = new Link(tor2, spine2, 10, 5, null);
+        Link l8r = new Link(spine2, tor2, 10, 0, null);
 
         ArrayList<Host> hosts = new ArrayList<Host>();
         ArrayList<Link> links = new ArrayList<Link>();
@@ -235,24 +235,51 @@ public class ComputePaths {
         links.add(l8);
         links.add(l8r);
 
-        //=======testing findPaths()========================
+        //=========testing findPaths()========================
         ComputePaths pathsComputer = new ComputePaths(spines, tors, hosts, links);
         pathsComputer.findPaths();
         System.out.println(pathsComputer.getPaths(a, a));//[]
         System.out.println(pathsComputer.getPaths(a, b));//3 paths
         System.out.println(pathsComputer.getPaths(a, c));//2 paths
 
-        //=======testing RandomPlacement.java================
+        //=========testing different placement algorithms==========
+        //To see how economic placement adjusts to link utilization,
+        //change link utilization above. 
+         
         ArrayList<Path> paths;
+        Path path;
         Flow flow;
 
         paths = pathsComputer.getPaths(a, b);
         flow = new Flow(a, b, 0, 10, 0.5);
-        System.out.println(RandomPlacement.randomPlacement(flow, paths));
+        System.out.println("\nflow a -> b");
+        path = RandomPlacement.randomPlacement(flow, paths);
+        System.out.println("randomPlacement: " + path);
+        path.removeFlow(flow);
+        path = EconomicPlacement.econPlacement(flow, paths);
+        System.out.println("econPlacment:    " + path);
+        path.removeFlow(flow);
+
 
         paths = pathsComputer.getPaths(a, c);
         flow = new Flow(a, c, 0, 10, 0.5);
-        System.out.println(RandomPlacement.randomPlacement(flow, paths));
+        System.out.println("\nflow a -> c");
+        path = RandomPlacement.randomPlacement(flow, paths);
+        System.out.println("randomPlacement: " + path);
+        path.removeFlow(flow);
+        path = EconomicPlacement.econPlacement(flow, paths);
+        System.out.println("econPlacment:    " + path);
+        path.removeFlow(flow);
+
+        paths = pathsComputer.getPaths(b, a);
+        flow = new Flow(b, a, 0, 10, 0.5);
+        System.out.println("\nflow b -> a");
+        path = RandomPlacement.randomPlacement(flow, paths);
+        System.out.println("randomPlacement: " + path);
+        path.removeFlow(flow);
+        path = EconomicPlacement.econPlacement(flow, paths);
+        System.out.println("econPlacment:    " + path);
+        path.removeFlow(flow);
 
 
     }

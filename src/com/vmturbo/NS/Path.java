@@ -67,7 +67,7 @@ public class Path {
 
         //quote of the path is the sum of link prices
         //link price is calculated as 1/(1-U)^2, U is percentage utilized of the link
-        int quote = 0;
+        double quote = 0;
         for (Link link : links) {
             double bandwidthLeft = link.getCapacity() - link.getUtilization();
             if (demand >= bandwidthLeft) {
@@ -77,7 +77,7 @@ public class Path {
             double linkPrice = 1 / Math.pow(1 - percentage, 2);
             quote += linkPrice;
         }
-        return quote;
+        return (int)quote;
     }
 
 
