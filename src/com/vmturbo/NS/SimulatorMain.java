@@ -23,8 +23,8 @@ public class SimulatorMain {
 	private double maxLinkUtilToRtoSpine;
 	private double stdevLinkUtilToRtoSpine;
 
-	private static String TOPOFILE = "input/topology.txt";
-	private static String QUEUEFILE = "input/flowQueue.txt";
+	private static String TOPOFILE = "input/topology";
+	private static String QUEUEFILE = "input/flowqueue";
 
 	/**
 	 * Calculate average, max and std dev of link utilization
@@ -163,7 +163,7 @@ public class SimulatorMain {
 					+ " Flow bandwidth: " 
 					+ flow.getBandwidth());
 			simulator.printMetrics();   
-			simulator.flowQueue.remove(flow);
+			//simulator.flowQueue.remove(flow);
 		}
 	}
 
