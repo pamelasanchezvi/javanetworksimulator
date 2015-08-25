@@ -58,7 +58,7 @@ public class Path {
      * @param flow
      * @return -1 if path can't satisfy flow requirement, an integer quote otherwise
      */
-    public int getQuote(Flow flow) {
+    public double getQuote(Flow flow) {
         if (!flow.getSource().equals(source) || !flow.getDest().equals(dest)) {
             return -1;
         }
@@ -77,7 +77,7 @@ public class Path {
             double linkPrice = 1 / Math.pow(1 - percentage, 2);
             quote += linkPrice;
         }
-        return (int)quote;
+        return (double)Math.round(quote * 100) / 100; //round it to two decimals
     }
 
 

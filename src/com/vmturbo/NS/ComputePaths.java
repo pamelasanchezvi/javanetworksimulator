@@ -187,11 +187,11 @@ public class ComputePaths {
         Link l1 = new Link(a, tor1, 1, 0, null);
         Link l1r = new Link(tor1, a, 1, 0, null);
 
-        Link l2 = new Link(b, tor1, 1, 0.5, null);
+        Link l2 = new Link(b, tor1, 1, 0, null);
         Link l2r = new Link(tor1, b, 1, 0, null);
 
-        Link l3 = new Link(tor1, spine1, 10, 0, null);
-        Link l3r = new Link(spine1, tor1, 10, 6, null);
+        Link l3 = new Link(tor1, spine1, 10, 1.2, null);
+        Link l3r = new Link(spine1, tor1, 10, 0, null);
 
         Link l4 = new Link(tor2, spine1, 10, 0, null);
         Link l4r = new Link(spine1, tor2, 10, 0, null);
@@ -202,10 +202,10 @@ public class ComputePaths {
         Link l6 = new Link(b, tor2, 1, 0, null);
         Link l6r = new Link(tor2, b, 1, 0, null);
 
-        Link l7 = new Link(tor1, spine2, 10, 0, null);
+        Link l7 = new Link(tor1, spine2, 10, 1.25, null);
         Link l7r = new Link(spine2, tor1, 10, 0, null);
 
-        Link l8 = new Link(tor2, spine2, 10, 5, null);
+        Link l8 = new Link(tor2, spine2, 10, 0, null);
         Link l8r = new Link(spine2, tor2, 10, 0, null);
 
         ArrayList<Host> hosts = new ArrayList<Host>();
@@ -245,7 +245,7 @@ public class ComputePaths {
         //=========testing different placement algorithms==========
         //To see how economic placement adjusts to link utilization,
         //change link utilization above. 
-         
+
         ArrayList<Path> paths;
         Path path;
         Flow flow;

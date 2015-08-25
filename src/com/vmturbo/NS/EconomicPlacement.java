@@ -31,16 +31,17 @@ public class EconomicPlacement {
         }
 
         //find cheapest path
-        int minQuote = Integer.MAX_VALUE;
+        double minQuote = Double.MAX_VALUE;
         int pathNo = 0;
         for (int i = 0; i < paths.size(); i++) {
-            int quote = paths.get(i).getQuote(flow);
+            double quote = paths.get(i).getQuote(flow);
+            //System.out.println(quote);
             if (quote >= 0 && quote < minQuote) {//quote can be -1 if path can't accommodate flow
                 minQuote = quote;
                 pathNo = i;
             }
         }
-        /**if at the end, minQuote is still Integer.Max_Value, 
+        /**if at the end, minQuote is still Double.Max_Value, 
          * it means that no path can accommodate the flow, 
          * but we assume this won't happen. 
          * Given that flow has infinite budget now, it will always be able to buy cheapest path

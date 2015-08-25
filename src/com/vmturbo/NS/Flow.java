@@ -8,7 +8,7 @@ public class Flow {
     Host source, dest;
     int start, duration; //in seconds
     double bandwidth; //bandwidth of the flow
-    int budget; // the budge the flow has, in virtual dollars
+    double budget; // the budge the flow has, in virtual dollars
 
     //constructor: assuming infinite budget for now
     public Flow(Host source, Host dest, int start, int duration, double bandwidth /*, int budget*/) {
@@ -17,7 +17,7 @@ public class Flow {
         this.start = start;
         this.duration = duration;
         this.bandwidth = bandwidth;
-        this.budget = Integer.MAX_VALUE;
+        this.budget = Double.MAX_VALUE;
     }
 
     public Host getSource() {
@@ -45,7 +45,7 @@ public class Flow {
         return bandwidth;
     }
 
-    public int getBudget() {
+    public double getBudget() {
         return budget;
     }
 
