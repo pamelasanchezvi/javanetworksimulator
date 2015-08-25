@@ -1,5 +1,6 @@
 /**
- * @author shangshangchen testing push
+ * @author shangshangchen 
+ * We assume static topology for now, i.e. no method for updating paths when a link is down.
  */
 
 package com.vmturbo.NS;
@@ -20,8 +21,8 @@ public class ComputePaths {
     private ArrayList<Link> links;
 
     /**
-     * we assume static topology for now
-     * all nodes are passed in as ArrayLists, maybe will switch to "Set" later
+     * Constructor: just takes in params. For actual computation, use findPaths()
+     * All nodes are passed in as "ArrayLists", maybe we will switch to "Set" later
      * @param spines
      * @param tors
      * @param hosts
@@ -37,8 +38,12 @@ public class ComputePaths {
     }
 
     /**
+     * Main method for computing paths for all pairs
      * This method only works for leaf-spine architecture.
      * For general graphs, we need something like BFS.
+     * For now, it only considers obvious paths, 
+     * e.g. host->tor->host, or host->tor->spine->tor->host.
+     * Later, we will consider paths that bounce off multiple spines.
      * @param spines
      * @param tors
      * @param hosts
@@ -47,11 +52,15 @@ public class ComputePaths {
     public void findPaths() {
 
         //create an empty |hosts| × |hosts| matrix
-        for (Host host : hosts) {
+        for (Host source : hosts) {
             HashMap<Host, ArrayList<Path>> destinations = new HashMap<>();
-            destinations.put(host, null);
-            matrix.put(host, destinations);
+            for (Host dest : hosts) {
+                destinations.put(dest, null);
+            }
+            matrix.put(source, destinations);
         }
+
+        System.out.println(matrix);
 
         //populate the matrix
         for (Host source : hosts) {
@@ -63,6 +72,7 @@ public class ComputePaths {
     }
 
     /**
+     * Helper method for findPaths()
      * Again, it only works for spine-leaf architecture
      * @param h1: source host
      * @param h2: destination host
@@ -143,6 +153,30 @@ public class ComputePaths {
     ///**for testing 
     public static void main(String[] args) {
 
+        //set up topology
+        Host a = new Host("a");
+        Host b = new Host("b");
+        Host c = new Host("c");
+        ArrayList<Host> hosts = new ArrayList<Host>();
+        hosts.add(a);
+        hosts.add(b);
+        hosts.add(c);
+        ComputePaths computer = new ComputePaths(null, null, hosts, null);
+        computer.findPaths();
+
+        ToRSwitch tor1 = new ToRSwitch("tor1");
+        ToRSwitch tor2 = new ToRSwitch("tor2");
+        tor1.addHost(a);
+        tor1.addHost(b);
+        tor2.addHost(c);
+        SpineSwitch spine = new SpineSwitch("spine");
+        spine.addtorSwitch(tor1);
+        spine.addtorSwitch(tor2);
+        Link l1 = new Link(a, tor1, 1, 0.5);
+        Link l2 = new Link(tor1, b, 1, 0.5);
+        Link l3 = new Link(tor1, spine, 10, 0);
+        Link l4 = new Link(spine, tor2, 10, 0);
+        Link l5 = new Link(tor2, c, 1, 0.5);
     }
     //*/
 }
