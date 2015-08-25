@@ -39,6 +39,25 @@ public class TopologySetup {
         return topoSetup;
     }
 
+    public String getFileName(){
+        return fileName;
+    }
+
+    public ArrayList<Host> getHostList(){
+        return hostList;
+    }
+
+    public ArrayList<ToRSwitch> getToRSwitchList(){
+        return torList;
+    }
+
+    public ArrayList<SpineSwitch> getSpineSwitchList(){
+        return spineList;
+    }
+
+    public ArrayList<Link> getLinkList(){
+        return linkList;
+    }
     // #switch name; type of switch; neighbor1, link capacity |  neighbor2, link capacity | ...
 
     public void parseFile(){
