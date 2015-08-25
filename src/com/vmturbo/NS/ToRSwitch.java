@@ -90,11 +90,11 @@ public class ToRSwitch extends Node {
         spine.addtorSwitch(tor1);
         spine.addtorSwitch(tor2);
         tor1.addSpine(spine);
-        Link l1 = new Link(a, tor1, 1, 0.5);
-        Link l2 = new Link(tor1, b, 1, 0.5);
-        Link l3 = new Link(tor1, spine, 10, 2);
-        Link l4 = new Link(spine, tor2, 10, 2);
-        Link l5 = new Link(tor2, c, 1, 0.5);
+        Link l1 = new Link(a, tor1, 1, 0.5, Link.LinkType.HOSTTOTOR);
+        Link l2 = new Link(tor1, b, 1, 0.5, Link.LinkType.HOSTTOTOR);
+        Link l3 = new Link(tor1, spine, 10, 2, Link.LinkType.TORTOSPINE);
+        Link l4 = new Link(spine, tor2, 10, 2, Link.LinkType.TORTOSPINE);
+        Link l5 = new Link(tor2, c, 1, 0.5, Link.LinkType.HOSTTOTOR);
 
 
 

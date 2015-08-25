@@ -49,11 +49,11 @@ public class FlowQueueSetupTest {
         spine.addtorSwitch(tor2);
         tor1.addSpine(spine);
         tor2.addSpine(spine);
-        Link l1 = new Link(h1, tor1, 1, 0.5);
-        Link l2 = new Link(tor1, h2, 1, 0.5);
-        Link l3 = new Link(tor1, spine, 10, 2);
-        Link l4 = new Link(spine, tor2, 10, 2);
-        Link l5 = new Link(tor2, h3, 1, 0.5);
+        Link l1 = new Link(h1, tor1, 1, 0.5, Link.LinkType.HOSTTOTOR);
+        Link l2 = new Link(tor1, h2, 1, 0.5, Link.LinkType.HOSTTOTOR);
+        Link l3 = new Link(tor1, spine, 10, 2, Link.LinkType.TORTOSPINE);
+        Link l4 = new Link(spine, tor2, 10, 2, Link.LinkType.TORTOSPINE);
+        Link l5 = new Link(tor2, h3, 1, 0.5, Link.LinkType.HOSTTOTOR);
 
         topo = TopologySetup.getInstance();
         topo.getHostList().add(h1);

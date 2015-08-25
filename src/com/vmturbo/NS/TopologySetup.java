@@ -89,7 +89,6 @@ public class TopologySetup {
             bufferedReader.close();
         }
         catch (Exception e) {
-            // TODO: handle exception
             System.out.println("couldn't open file");
         }
     }
@@ -170,7 +169,7 @@ public class TopologySetup {
                 nextTor = new ToRSwitch(nextNeighbor);
                 torList.add(nextTor);
             }
-            Link newlink = new Link(spswitch, nextTor, capacity, 0.0);
+            Link newlink = new Link(spswitch, nextTor, capacity, 0.0, Link.LinkType.TORTOSPINE);
             linkList.add(newlink);
         }
 
@@ -201,7 +200,7 @@ public class TopologySetup {
                         nextsp = new SpineSwitch(nextNeighbor);
                         spineList.add(nextsp);
                     }
-                    newlink = new Link(torswitch, nextsp, capacity, 0.0);
+                    newlink = new Link(torswitch, nextsp, capacity, 0.0, Link.LinkType.TORTOSPINE);
                     linkList.add(newlink);
                     break;
                 case "host":
@@ -210,7 +209,7 @@ public class TopologySetup {
                         nextHost = new Host(nextNeighbor);
                         hostList.add(nextHost);
                     }
-                    newlink = new Link(torswitch, nextHost, capacity, 0.0);
+                    newlink = new Link(torswitch, nextHost, capacity, 0.0, Link.LinkType.HOSTTOTOR);
                     linkList.add(newlink);
                     break;
                 default:

@@ -18,15 +18,31 @@ public class SimulatorMain {
     ArrayList<Flow> flowQueue;
     private double avgLinkUtil;
     private double maxLinkUtil;
-    private double minLinkUtil;
     private double stdevLinkUtil;
     
-    private static String TOPOFILE = "../../../../input/topology.txt";
-    private static String QUEUEFILE = "../../../../input/flowQueue.txt";
-
-    public double calculateLinkUtil(){
-    	return 0;
+    private static String TOPOFILE = "input/topology.txt";
+    private static String QUEUEFILE = "input/flowQueue.txt";
+/*
+    public void calculateLinkUtil(ArrayList<Link> linkList){
+    	double sumUtilHostTor;
+    	double sumUtilTorSpine;
+    	for(Link link: linkList){
+    		if(link.getSrcNode().)
+    	}
+    }*/
+    
+    public double getAvgLinkUtil(){
+    	return avgLinkUtil;
     }
+    
+    public double getMaxLinkUtil(){
+    	return maxLinkUtil;
+    }
+    
+    public double getStdevLinkUtil(){
+    	return stdevLinkUtil;
+    }
+    
     
     /**
      * @param args
@@ -50,6 +66,13 @@ public class SimulatorMain {
         comPaths.findPaths();
         ArrayList<Path> allPaths;
 
+        // Initial link utilization
+      /*  simulator.calculateLinkUtil(topo.linkList);
+        System.out.println("Link Utilization initially:");
+        System.out.println("Avg: " + simulator.getAvgLinkUtil() 
+        		       	+ "\tMax: " + simulator.getMaxLinkUtil()
+        		       	+ "\tStdev: " + simulator.getStdevLinkUtil());
+        */// find random placement
         // find random placement
         for (Flow flow : simulator.flowQueue) {
             allPaths = comPaths.getPaths(flow.source, flow.dest);
@@ -58,7 +81,20 @@ public class SimulatorMain {
                                    + "\tdest:"
                                    + flow.dest);
             }
+            
             RandomPlacement.randomPlacement(flow, allPaths);
+            /*
+            simulator.calculateLinkUtil(topo.linkList);
+            System.out.println("Link Utilization after placing Flow: "
+            					+ flow.getSource().getName()
+            					+ " -> "
+            					+ flow.getDest().getName()
+            					+ " Flow bandwidth: " 
+            					+ flow.getBandwidth());
+            System.out.println("Avg: " + simulator.getAvgLinkUtil() 
+            		       	+ "\tMax: " + simulator.getMaxLinkUtil()
+            		       	+ "\tStdev: " + simulator.getStdevLinkUtil());
+            */
         }
     }
 
