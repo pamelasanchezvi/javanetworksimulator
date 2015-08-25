@@ -1,4 +1,4 @@
-tor1; tor; spsw1, 40 | h1, 1 | h2, 1
-tor2; tor; spsw1, 10 | h3, 1 | h4, 1
-spsw1; spine; tor1, 40 | tor2, 10
-spsw2; spine; tor1, 10 | tor2, 40
+tor1; tor; spsw1, spine, 40 | h1, host,1 | h2, host, 1
+tor2; tor; spsw1, spine, 10 | h3, host,1 | h4, host, 1
+spsw1; spine; tor1,tor, 40 | tor2, tor,10
+spsw2; spine; tor1,tor, 10 | tor2, tor,40
