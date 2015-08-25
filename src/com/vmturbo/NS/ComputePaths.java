@@ -55,12 +55,10 @@ public class ComputePaths {
         for (Host source : hosts) {
             HashMap<Host, ArrayList<Path>> destinations = new HashMap<>();
             for (Host dest : hosts) {
-                destinations.put(dest, null);
+                destinations.put(dest, new ArrayList<Path>());
             }
             matrix.put(source, destinations);
         }
-
-        System.out.println(matrix);
 
         //populate the matrix
         for (Host source : hosts) {
@@ -93,8 +91,8 @@ public class ComputePaths {
                     ArrayList<Link> pathLinks = new ArrayList<Link>();
                     Link l1 = findLink(h1, tor1);
                     Link l2 = findLink(tor1, h2);
-                    if (l1 != null && l2 != null &&
-                        pathLinks.add(l1) && pathLinks.add(l2)) {
+                    if (l1 != null && pathLinks.add(l1) &&
+                        l2 != null && pathLinks.add(l2)) {
                         Path newPath = new Path(h1, h2, pathLinks);
                         getPaths(h1, h2).add(newPath);
                     }
@@ -105,13 +103,13 @@ public class ComputePaths {
                     ArrayList<SpineSwitch> spines2 = tor2.getSpineList();
                     if (spines1 == null || spines2 == null)
                         continue;
-                    for (SpineSwitch spine1 : spines1) {
-                        if (spines2.contains(spine1)) {
-                            //add path: h1->tor1->spine1->tor2->h2
+                    for (SpineSwitch spine : spines1) {
+                        if (spines2.contains(spine)) {
+                            //add path: h1->tor1->spine->tor2->h2
                             ArrayList<Link> pathLinks = new ArrayList<Link>();
                             Link l1 = findLink(h1, tor1);
-                            Link l2 = findLink(tor1, spine1);
-                            Link l3 = findLink(spine1, tor2);
+                            Link l2 = findLink(tor1, spine);
+                            Link l3 = findLink(spine, tor2);
                             Link l4 = findLink(tor2, h2);
                             if (l1 != null && pathLinks.add(l1) &&
                                 l2 != null && pathLinks.add(l2) &&
@@ -145,38 +143,104 @@ public class ComputePaths {
         return null;
     }
 
-
+    /**
+     * @param source
+     * @param dest
+     * @return: pointer to the list of paths between source and dest
+     */
     public ArrayList<Path> getPaths(Host source, Host dest) {
         return matrix.get(source).get(dest);
     }
 
-    ///**for testing 
+    /**for testing 
     public static void main(String[] args) {
 
         //set up topology
+
         Host a = new Host("a");
         Host b = new Host("b");
         Host c = new Host("c");
-        ArrayList<Host> hosts = new ArrayList<Host>();
-        hosts.add(a);
-        hosts.add(b);
-        hosts.add(c);
-        ComputePaths computer = new ComputePaths(null, null, hosts, null);
-        computer.findPaths();
 
         ToRSwitch tor1 = new ToRSwitch("tor1");
         ToRSwitch tor2 = new ToRSwitch("tor2");
         tor1.addHost(a);
         tor1.addHost(b);
+        tor2.addHost(b);
         tor2.addHost(c);
-        SpineSwitch spine = new SpineSwitch("spine");
-        spine.addtorSwitch(tor1);
-        spine.addtorSwitch(tor2);
-        Link l1 = new Link(a, tor1, 1, 0.5);
-        Link l2 = new Link(tor1, b, 1, 0.5);
-        Link l3 = new Link(tor1, spine, 10, 0);
-        Link l4 = new Link(spine, tor2, 10, 0);
-        Link l5 = new Link(tor2, c, 1, 0.5);
+        a.addtorSwitch(tor1);
+        b.addtorSwitch(tor1);
+        b.addtorSwitch(tor2);
+        c.addtorSwitch(tor2);
+
+        SpineSwitch spine1 = new SpineSwitch("spine1");
+        SpineSwitch spine2 = new SpineSwitch("spine2");
+        spine1.addtorSwitch(tor1);
+        spine1.addtorSwitch(tor2);
+        spine2.addtorSwitch(tor1);
+        spine2.addtorSwitch(tor2);
+        tor1.addSpine(spine1);
+        tor1.addSpine(spine2);
+        tor2.addSpine(spine1);
+        tor2.addSpine(spine2);
+
+
+        Link l1 = new Link(a, tor1, 1, 0);
+        Link l1r = new Link(tor1, a, 1, 0);
+
+        Link l2 = new Link(b, tor1, 1, 0);
+        Link l2r = new Link(tor1, b, 1, 0);
+
+        Link l3 = new Link(tor1, spine1, 10, 0);
+        Link l3r = new Link(spine1, tor1, 10, 0);
+
+        Link l4 = new Link(tor2, spine1, 10, 0);
+        Link l4r = new Link(spine1, tor2, 10, 0);
+
+        Link l5 = new Link(c, tor2, 1, 0);
+        Link l5r = new Link(tor2, c, 1, 0);
+
+        Link l6 = new Link(b, tor2, 1, 0);
+        Link l6r = new Link(tor2, b, 1, 0);
+
+        Link l7 = new Link(tor1, spine2, 10, 0);
+        Link l7r = new Link(spine2, tor1, 10, 0);
+
+        Link l8 = new Link(tor2, spine2, 10, 0);
+        Link l8r = new Link(spine2, tor2, 10, 0);
+
+        ArrayList<Host> hosts = new ArrayList<Host>();
+        ArrayList<Link> links = new ArrayList<Link>();
+        ArrayList<ToRSwitch> tors = new ArrayList<ToRSwitch>();
+        ArrayList<SpineSwitch> spines = new ArrayList<SpineSwitch>();
+        hosts.add(a);
+        hosts.add(b);
+        hosts.add(c);
+        tors.add(tor1);
+        tors.add(tor2);
+        spines.add(spine1);
+        links.add(l1);
+        links.add(l1r);
+        links.add(l2);
+        links.add(l2r);
+        links.add(l3);
+        links.add(l3r);
+        links.add(l4);
+        links.add(l4r);
+        links.add(l5);
+        links.add(l5r);
+        links.add(l6);
+        links.add(l6r);
+        links.add(l7);
+        links.add(l7r);
+        links.add(l8);
+        links.add(l8r);
+
+
+        ComputePaths pathsComputer = new ComputePaths(spines, tors, hosts, links);
+        pathsComputer.findPaths();
+        System.out.println(pathsComputer.getPaths(a, a));//[]
+        System.out.println(pathsComputer.getPaths(a, b));//3 paths
+        System.out.println(pathsComputer.getPaths(a, c));//2 paths
     }
-    //*/
+    */
 }
