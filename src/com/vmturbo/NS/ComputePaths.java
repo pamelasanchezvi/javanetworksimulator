@@ -1,6 +1,7 @@
 /**
- * @author shangshangchen
+ * @author shangshangchen testing push
  */
+
 package com.vmturbo.NS;
 
 import java.util.ArrayList;
@@ -134,15 +135,14 @@ public class ComputePaths {
         return null;
     }
 
-    //maybe need to have a public version that returns a copy (shallow or deep?)
-    //and a private version as a helper function
+
     public ArrayList<Path> getPaths(Host source, Host dest) {
         return matrix.get(source).get(dest);
     }
 
-    //for testing 
+    ///**for testing 
     public static void main(String[] args) {
-        
-    }
 
+    }
+    //*/
 }
