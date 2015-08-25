@@ -163,6 +163,7 @@ public class SimulatorMain {
 					+ " Flow bandwidth: " 
 					+ flow.getBandwidth());
 			simulator.printMetrics();   
+			simulator.flowQueue.remove(flow);
 		}
 	}
 
