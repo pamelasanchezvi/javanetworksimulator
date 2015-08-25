@@ -212,6 +212,7 @@ public class TopologySetup {
                     }
                     newlink = new Link(torswitch, nextHost, capacity, 0.0);
                     linkList.add(newlink);
+                    break;
                 default:
                     break;
             }
