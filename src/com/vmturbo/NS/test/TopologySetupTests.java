@@ -55,7 +55,7 @@ public class TopologySetupTests {
             System.out.println("spine.getName()" + spine.getName());
         }
         for (Link lk:linklist ){
-            //System.out.println("spine.getName()" + lk.getName());
+            System.out.println("link: " + lk.getSrcNode().getName() + " -> " + lk.getDestNode().getName());
         }
       //  fail("Not yet implemented");
     }

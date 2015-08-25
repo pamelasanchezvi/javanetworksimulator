@@ -16,10 +16,18 @@ public class SimulatorMain {
     ArrayList<Host> hostList;
     ArrayList<Link> linkList;
     ArrayList<Flow> flowQueue;
-
+    private double avgLinkUtil;
+    private double maxLinkUtil;
+    private double minLinkUtil;
+    private double stdevLinkUtil;
+    
     private static String TOPOFILE = "../../../../input/topology.txt";
     private static String QUEUEFILE = "../../../../input/flowQueue.txt";
 
+    public double calculateLinkUtil(){
+    	return 0;
+    }
+    
     /**
      * @param args
      */
