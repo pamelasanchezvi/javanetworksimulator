@@ -56,8 +56,8 @@ public class Flow {
                 + "starts: " + getStart() + "s; "
                 + "duration: " + getDuration() + "s; "
                 + bandwidth + " Gb/s; "
-                //+ budget + " $;" 
-                + "\n");
+        //+ budget + " $;" 
+        );
     }
 
     /** for testing purpose

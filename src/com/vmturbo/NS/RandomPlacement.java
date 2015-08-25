@@ -10,9 +10,6 @@ import java.util.Random;
 public class RandomPlacement {
 
     /**
-     * ECMP supposedly uses a hash function to randomly choose a next-hop among \ 
-     * multiple equally best next-hops. But we don't know about hashing functions \
-     * can achieve uniform randomness, so we just use random number generator here.
      * 
      * @param flow: the flow that needs placement
      * @param allPaths: a list of all paths in the network, regardless of usage
@@ -37,7 +34,8 @@ public class RandomPlacement {
             Random rand = new Random();
             int n = rand.nextInt(paths.size());
             Path path = paths.get(n);
-            //not sure if the actual placement act should be carried out here
+            //not sure if the actual placement should be carried out here
+            //or should placement algorithm only give recommendations?
             if (path.placeFlow(flow) == 0) { //if selling is successful
                 return path;
             }
@@ -49,7 +47,7 @@ public class RandomPlacement {
             }
         }
     }
-    
-    
+
+    //testing is carried out in ComputePaths.java
 
 }

@@ -235,12 +235,26 @@ public class ComputePaths {
         links.add(l8);
         links.add(l8r);
 
-
+        //=======testing findPaths()========================
         ComputePaths pathsComputer = new ComputePaths(spines, tors, hosts, links);
         pathsComputer.findPaths();
         System.out.println(pathsComputer.getPaths(a, a));//[]
         System.out.println(pathsComputer.getPaths(a, b));//3 paths
         System.out.println(pathsComputer.getPaths(a, c));//2 paths
+
+        //=======testing RandomPlacement.java================
+        ArrayList<Path> paths;
+        Flow flow;
+
+        paths = pathsComputer.getPaths(a, b);
+        flow = new Flow(a, b, 0, 10, 0.5);
+        System.out.println(RandomPlacement.randomPlacement(flow, paths));
+
+        paths = pathsComputer.getPaths(a, c);
+        flow = new Flow(a, c, 0, 10, 0.5);
+        System.out.println(RandomPlacement.randomPlacement(flow, paths));
+
+
     }
     */
 }
