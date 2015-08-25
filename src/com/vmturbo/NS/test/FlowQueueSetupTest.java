@@ -32,33 +32,33 @@ public class FlowQueueSetupTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		Host a = new Host("a");
-        Host b = new Host("b");
-        Host c = new Host("c");
+		Host h1 = new Host("h1");
+        Host h2 = new Host("h2");
+        Host h3 = new Host("h3");
         ToRSwitch tor1 = new ToRSwitch("tor1");
         ToRSwitch tor2 = new ToRSwitch("tor2");
-        tor1.addHost(a);
-        tor1.addHost(b);
-        tor2.addHost(c);
-        a.addtorSwitch(tor1);
-        b.addtorSwitch(tor1);
-        c.addtorSwitch(tor2);
+        tor1.addHost(h1);
+        tor1.addHost(h2);
+        tor2.addHost(h3);
+        h1.addtorSwitch(tor1);
+        h2.addtorSwitch(tor1);
+        h3.addtorSwitch(tor2);
         
         SpineSwitch spine = new SpineSwitch("spine");
         spine.addtorSwitch(tor1);
         spine.addtorSwitch(tor2);
         tor1.addSpine(spine);
         tor2.addSpine(spine);
-        Link l1 = new Link(a, tor1, 1, 0.5);
-        Link l2 = new Link(tor1, b, 1, 0.5);
+        Link l1 = new Link(h1, tor1, 1, 0.5);
+        Link l2 = new Link(tor1, h2, 1, 0.5);
         Link l3 = new Link(tor1, spine, 10, 2);
         Link l4 = new Link(spine, tor2, 10, 2);
-        Link l5 = new Link(tor2, c, 1, 0.5);
+        Link l5 = new Link(tor2, h3, 1, 0.5);
 
         topo = TopologySetup.getInstance();
-        topo.getHostList().add(a);
-        topo.getHostList().add(b);
-        topo.getHostList().add(c);
+        topo.getHostList().add(h1);
+        topo.getHostList().add(h2);
+        topo.getHostList().add(h3);
         topo.getLinkList().add(l1);
         topo.getLinkList().add(l2);
         topo.getLinkList().add(l3);
@@ -74,14 +74,45 @@ public class FlowQueueSetupTest {
 	 */
 	@Test
 	public void testPopulateQueue() {
-		System.out.println(System.getProperty("topology"));
-		String fileName = "../../../input/flowqueue";
+		String fileName = "input/flowqueue";
 		FlowQueueSetup queueSetup = new FlowQueueSetup(fileName);
 		queueSetup.populateQueue();
 		ArrayList<Flow> queue = queueSetup.getFlowQueue();
-		assertEquals("test", queue.size(), 4);
-		
-		//fail("Not yet implemented");
+		assertEquals("Size of queue is incorrect", queue.size(), 4);
+		Flow flow = queue.get(0);
+		if(flow == null){
+			System.out.println("null");
+		}
+		assertEquals("Source Host of first flow is incorrect", queue.get(0).getSource().getName(), "h1");
+		assertEquals("Source Host of second flow is incorrect", queue.get(1).getSource().getName(), "h1");
+		assertEquals("Source Host of third flow is incorrect", queue.get(2).getSource().getName(), "h1");
+		assertEquals("Source Host of fourth flow is incorrect", queue.get(3).getSource().getName(), "h1");
+		assertEquals("Destination Host of first flow is incorrect", queue.get(0).getDest().getName(), "h2");
+		assertEquals("Destination Host of second flow is incorrect", queue.get(1).getDest().getName(), "h2");
+		assertEquals("Destination Host of third flow is incorrect", queue.get(2).getDest().getName(), "h2");
+		assertEquals("Destination Host of fourth flow is incorrect", queue.get(3).getDest().getName(), "h2");
 	}
 
+	/**
+	 * Test method for {@link com.vmturbo.NS.FlowQueueSetup#populateQueue()}.
+	 */
+	@Test
+	public void testremoveFlow() {
+		String fileName = "input/flowqueue";
+		FlowQueueSetup queueSetup = new FlowQueueSetup(fileName);
+		queueSetup.populateQueue();
+		ArrayList<Flow> queue = queueSetup.getFlowQueue();
+		assertEquals("Size of queue is incorrect", queue.size(), 4);
+		queueSetup.removeFlow(queue.get(0));
+		assertEquals("Size of queue is incorrect", queue.size(), 3);
+		
+		assertEquals("Source Host of first flow is incorrect", queue.get(0).getSource().getName(), "h1");
+		assertEquals("Source Host of second flow is incorrect", queue.get(1).getSource().getName(), "h1");
+		assertEquals("Source Host of third flow is incorrect", queue.get(2).getSource().getName(), "h1");
+		assertEquals("Destination Host of first flow is incorrect", queue.get(0).getDest().getName(), "h2");
+		assertEquals("Destination Host of second flow is incorrect", queue.get(1).getDest().getName(), "h2");
+		assertEquals("Destination Host of third flow is incorrect", queue.get(2).getDest().getName(), "h2");
+		
+	}
+	
 }

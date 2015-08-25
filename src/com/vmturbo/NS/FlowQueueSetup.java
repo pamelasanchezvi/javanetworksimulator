@@ -34,25 +34,25 @@ public class FlowQueueSetup {
 		Host destination;
 		int start;
 		int duration;
-		int bandwidth;
+		double bandwidth;
 		
 		try{
 			reader = new BufferedReader(new FileReader(queueFileName)); 
 			// read line by line
 			while((readLine = reader.readLine()) != null){
-				System.out.println(readLine);
+				
 				readLine.trim();
 				flowData = readLine.split(";");
 
 				if(flowData.length == 5){
 					// construct Flow object
-					start = Integer.parseInt(flowData[0]);
-					duration = Integer.parseInt(flowData[1]);
-					source = TopologySetup.getInstance().getHost(flowData[2]);		// method should be implemented in TopologySetup
-					destination = TopologySetup.getInstance().getHost(flowData[3]);
-					bandwidth = Integer.parseInt(flowData[4]);
+					start = Integer.parseInt(flowData[0].trim());
+					duration = Integer.parseInt(flowData[1].trim());
+					source = TopologySetup.getInstance().getHost(flowData[2].trim());		// method should be implemented in TopologySetup
+					destination = TopologySetup.getInstance().getHost(flowData[3].trim());
+					bandwidth = Double.parseDouble(flowData[4].trim());
 					Flow flowToAdd = new Flow(source, destination, start, duration, bandwidth);
-
+					//System.out.println(source);
 					// add Flow object to queue
 					addFlow(flowToAdd);
 				} else {
