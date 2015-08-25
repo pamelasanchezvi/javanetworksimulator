@@ -39,7 +39,8 @@ public class TopologySetup {
         return topoSetup;
     }
 
-// #switch name; type of switch; neighbor1, link capacity |  neighbor2, link capacity | ...
+    // #switch name; type of switch; neighbor1, link capacity |  neighbor2, link capacity | ...
+
     public void parseFile(){
         try {
             FileReader filereader = new FileReader(fileName);
@@ -56,7 +57,7 @@ public class TopologySetup {
                 initSwitches(neighborsLine, switchType, switchname);
 
             }
-             bufferedReader.close();
+            bufferedReader.close();
         }
         catch (Exception e) {
             // TODO: handle exception
@@ -64,15 +65,49 @@ public class TopologySetup {
         }
     }
 
+    private Host hostSearch(String host){
+        for (Host nxt: hostList){
+            if (nxt.exists(host)){
+                return nxt;
+            }
+        }
+        return null;
+    }
+    private ToRSwitch torSearch(String tor){
+        for (ToRSwitch nxt: torList){
+            if (nxt.exists(tor)){
+                return nxt;
+            }
+        }
+        return null;
+    }
+    private SpineSwitch spineSearch(String spine){
+        for (SpineSwitch nxt : spineList){
+            if (nxt.exists(spine)){
+                return nxt;
+            }
+        }
+        return null;
+    }
     private void initSwitches(String linkPairs, String srcType, String srcName){
         // linkPair format is : " neighbor1, link capacity "
         switch (srcType) {
             case "spine":
-                SpineSwitch newspine = new SpineSwitch(srcName);
+                SpineSwitch newspine=null;
+
+                if ((newspine = spineSearch(srcName)) == null) {
+                    newspine = new SpineSwitch(srcName);
+                    spineList.add(newspine);
+                }
                 // look for neighbors
-                parseNeighbors(linkPairs, newspine);
+                parseSpineNeighbors(linkPairs, newspine);
             case "tor":
-                ToRSwitch newtor = new ToRSwitch(srcName);
+                ToRSwitch newtor = null;
+                if ((newtor = torSearch(srcName)) == null) {
+                    newtor = new ToRSwitch(srcName);
+                    torList.add(newtor);
+                }
+                parseLeafToRNeighbors(linkPairs, newtor);
                 break;
 
             default:
@@ -80,7 +115,7 @@ public class TopologySetup {
         }
     }
 
-    private void parseNeighbors(String linkp, SpineSwitch spswitch) {
+    private void parseSpineNeighbors(String linkp, SpineSwitch spswitch) {
 
         String delims = "|";
         StringTokenizer str = new StringTokenizer(neighborsLine, delims);
@@ -94,14 +129,45 @@ public class TopologySetup {
             nextcapacity = tk.hasMoreTokens() ? tk.nextToken() : null;
             Double capacity =  Double.parseDouble(nextcapacity);
             // then we create link between switchname and nextNeighbor
-            ToRSwitch nextTor = new ToRSwitch(nextNeighbor);
+            ToRSwitch nextTor = null;
+            if ((nextTor = torSearch(nextNeighbor)) == null){
+                nextTor = new ToRSwitch(nextNeighbor);
+                torList.add(nextTor);
+            }
             Link newlink = new Link(spswitch, nextTor, capacity, 0.0);
+            linkList.add(newlink);
         }
 
 
 
     }
 
+    private void parseLeafToRNeighbors(String linkp, ToRSwitch torswitch) {
+
+        String delims = "|";
+        StringTokenizer str = new StringTokenizer(neighborsLine, delims);
+        while(str.hasMoreElements()){
+            linkStr = str.nextToken();
+            // here we pass String of format : " neighbor1, link capacity " to function
+            // this is for each neighbor
+            String delim = ",";
+            StringTokenizer tk = new StringTokenizer(linkStr, delim);
+            nextNeighbor = tk.hasMoreTokens() ? tk.nextToken() : null;
+            nextcapacity = tk.hasMoreTokens() ? tk.nextToken() : null;
+            Double capacity =  Double.parseDouble(nextcapacity);
+            // then we create link between switchname and nextNeighbor
+            Host nextHost = null;
+            if ( (nextHost = hostSearch(nextNeighbor))== null){
+                nextHost = new Host(nextNeighbor);
+                hostList.add(nextHost);
+            }
+
+            Link newlink = new Link(torswitch, nextHost, capacity, 0.0);
+        }
+
+
+
+    }
     public Host getHost(String hostName){
         for (Host host: hostList){
             if (host.getName().equals(hostName)){
@@ -115,3 +181,4 @@ public class TopologySetup {
 
     // populate the list of hosts, list of , arraylist of spineswitches
 }
+

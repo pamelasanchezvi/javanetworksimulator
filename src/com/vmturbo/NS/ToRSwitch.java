@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.vmturbo.NS;
 
@@ -13,21 +13,21 @@ public class ToRSwitch extends Node {
 
 	private ArrayList<Host> hostList;
 	private ArrayList<SpineSwitch> spineList;
-	
+
 	public ToRSwitch(String name){
 		this.name = name;
 		this.hostList = new ArrayList<Host>();
 		this.spineList = new ArrayList<SpineSwitch>();
 	}
-	
+
 	public ArrayList<Host> getHostList(){
 		return hostList;
 	}
-	
+
 	public ArrayList<SpineSwitch> getSpineList(){
 		return spineList;
 	}
-	
+
 	public void addHost(Host host){
 		if(host == null){
 			System.err.println("Adding null host to TOR " + this.name);
@@ -39,7 +39,7 @@ public class ToRSwitch extends Node {
 		}
 		hostList.add(host);
 	}
-	
+
 	public void addSpine(SpineSwitch spSwitch){
 		if(spSwitch == null){
 			System.err.println("Adding null spine switch to TOR " + this.name);
@@ -51,7 +51,7 @@ public class ToRSwitch extends Node {
 		}
 		spineList.add(spSwitch);
 	}
-	
+
 	public void removeHost(Host host){
 		if(host == null){
 			System.err.println("Removing null host from TOR " + this.name);
@@ -63,7 +63,7 @@ public class ToRSwitch extends Node {
 		}
 		hostList.remove(host);
 	}
-	
+
 	public void removeSpine(SpineSwitch spSwitch){
 		if(spSwitch == null){
 			System.err.println("Removing null spine switch from TOR " + this.name);
@@ -75,7 +75,7 @@ public class ToRSwitch extends Node {
 		}
 		spineList.remove(spSwitch);
 	}
-	
+
 	public static void main(String[] args){
 		Host a = new Host("a");
         Host b = new Host("b");
@@ -109,4 +109,10 @@ public class ToRSwitch extends Node {
         links2.add(l5);
 
 	}
+	   public boolean exists(String otherswitch) {
+	        if (otherswitch!=null && this.name.equals(otherswitch)){
+	            return true;
+	        }
+	        return false;
+	    }
 }
