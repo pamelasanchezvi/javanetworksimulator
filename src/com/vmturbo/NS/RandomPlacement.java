@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 
-public class ECMP {
+public class RandomPlacement {
 
     /**
      * ECMP supposedly uses a hash function to randomly choose a next-hop among \ 
@@ -18,7 +18,7 @@ public class ECMP {
      * @param allPaths: a list of all paths in the network, regardless of usage
      * @return: a randomly chosen path  
      */
-    public static Path ECMPPlacement(Flow flow, ArrayList<Path> allPaths) {
+    public static Path randomPlacement(Flow flow, ArrayList<Path> allPaths) {
 
         //find only paths that match the source-destination of the flow
         ArrayList<Path> paths = new ArrayList<Path>();
@@ -49,5 +49,7 @@ public class ECMP {
             }
         }
     }
+    
+    
 
 }
