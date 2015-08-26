@@ -47,12 +47,30 @@ public class TopologySetupTests {
         for (Host host:hostlist ){
 
             System.out.println("host.getName()" + host.getName());
+            ArrayList<ToRSwitch> torlistfromHost = host.getToRSwitch();
+            for (ToRSwitch tor: torlistfromHost){
+                System.out.println("   host list" + tor.getName());
+            }
+
+
         }
         for (ToRSwitch tor:torlist){
             System.out.println("tor.getName()" + tor.getName());
+            ArrayList<Host> hostlistfromToR = tor.getHostList();
+            for (Host h: hostlistfromToR){
+                System.out.println("   host list" + h.getName());
+            }
+            ArrayList<SpineSwitch> spinelistfromToR = tor.getSpineList();
+            for (SpineSwitch s: spinelistfromToR){
+                System.out.println("   spine list" + s.getName());
+            }
         }
         for (SpineSwitch spine:spinelist ){
             System.out.println("spine.getName()" + spine.getName());
+            ArrayList<ToRSwitch> torlistfromspine = spine.getToRList();
+            for (ToRSwitch tor: torlistfromspine){
+                System.out.println("   tor list" + tor.getName());
+            }
         }
         for (Link lk:linklist ){
             System.out.println("link: " + lk.getSrcNode().getName() + " -> " + lk.getDestNode().getName());
