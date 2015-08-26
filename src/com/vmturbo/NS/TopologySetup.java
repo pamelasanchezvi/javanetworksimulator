@@ -16,7 +16,7 @@ import java.util.StringTokenizer;
 public class TopologySetup {
     //
     ArrayList<SpineSwitch> spineList;
-    ArrayList<ToRSwitch> torList;
+    ArrayList<ToRSwitch> torList;       // list of all ToR in the entire network
     ArrayList<Host> hostList;
     ArrayList<Link> linkList;
     String fileName;
@@ -170,6 +170,7 @@ public class TopologySetup {
                 torList.add(nextTor);
             }
             Link newlink = new Link(spswitch, nextTor, capacity, 0.0, Link.LinkType.TORTOSPINE);
+            spswitch.addtorSwitch(nextTor);
             linkList.add(newlink);
         }
 
@@ -201,15 +202,18 @@ public class TopologySetup {
                         spineList.add(nextsp);
                     }
                     newlink = new Link(torswitch, nextsp, capacity, 0.0, Link.LinkType.TORTOSPINE);
+                    torswitch.addSpine(nextsp);
                     linkList.add(newlink);
                     break;
                 case "host":
                     Host nextHost = null;
                     if ( (nextHost = hostSearch(nextNeighbor))== null){
                         nextHost = new Host(nextNeighbor);
+                        nextHost.addtorSwitch(torswitch);
                         hostList.add(nextHost);
                     }
                     newlink = new Link(torswitch, nextHost, capacity, 0.0, Link.LinkType.HOSTTOTOR);
+                    torswitch.addHost(nextHost);
                     linkList.add(newlink);
                     break;
                 default:

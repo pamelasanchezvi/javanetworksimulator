@@ -11,7 +11,7 @@ import java.util.ArrayList;
  */
 public class ToRSwitch extends Node {
 
-	private ArrayList<Host> hostList;
+	private ArrayList<Host> hostList;      // list of hosts that the ToR is connected to
 	private ArrayList<SpineSwitch> spineList;
 
 	public ToRSwitch(String name){
