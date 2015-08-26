@@ -152,7 +152,7 @@ public class ComputePaths {
         return matrix.get(source).get(dest);
     }
 
-    /**for testing 
+    ///**for testing 
     public static void main(String[] args) {
 
         //set up topology
@@ -255,33 +255,32 @@ public class ComputePaths {
         System.out.println("\nflow a -> b");
         path = RandomPlacement.randomPlacement(flow, paths);
         System.out.println("randomPlacement: " + path);
-        path.removeFlow(flow);
+        path = ECMPPlacement.ecmpPlacement(flow, paths);
+        System.out.println("ecmpPlacement:   " + path);
         path = EconomicPlacement.econPlacement(flow, paths);
         System.out.println("econPlacment:    " + path);
-        path.removeFlow(flow);
-
 
         paths = pathsComputer.getPaths(a, c);
         flow = new Flow(a, c, 0, 10, 0.5);
         System.out.println("\nflow a -> c");
         path = RandomPlacement.randomPlacement(flow, paths);
         System.out.println("randomPlacement: " + path);
-        path.removeFlow(flow);
+        path = ECMPPlacement.ecmpPlacement(flow, paths);
+        System.out.println("ecmpPlacement:   " + path);
         path = EconomicPlacement.econPlacement(flow, paths);
         System.out.println("econPlacment:    " + path);
-        path.removeFlow(flow);
 
         paths = pathsComputer.getPaths(b, a);
         flow = new Flow(b, a, 0, 10, 0.5);
         System.out.println("\nflow b -> a");
         path = RandomPlacement.randomPlacement(flow, paths);
         System.out.println("randomPlacement: " + path);
-        path.removeFlow(flow);
+        path = ECMPPlacement.ecmpPlacement(flow, paths);
+        System.out.println("ecmpPlacement:   " + path);
         path = EconomicPlacement.econPlacement(flow, paths);
         System.out.println("econPlacment:    " + path);
-        path.removeFlow(flow);
 
 
     }
-    */
+    //*/
 }
