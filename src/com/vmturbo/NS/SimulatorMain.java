@@ -131,6 +131,7 @@ public class SimulatorMain {
 		FlowQueueSetup queue = new FlowQueueSetup(QUEUEFILE);
 		queue.populateQueue();
 		simulator.flowQueue = queue.getFlowQueue();
+		System.out.println("Size of flow event queue: " + simulator.flowQueue.size());
 
 		// compute all the paths
 		ComputePaths comPaths = new ComputePaths(topo.spineList, topo.torList, topo.hostList,
@@ -146,18 +147,27 @@ public class SimulatorMain {
 		// find random placement
 		// find random placement
 		for (FlowEvent flowEvent : simulator.flowQueue) {
+			Flow flow = flowEvent.getFlow();
 			switch(flowEvent.getFlowEventType()){
 			case END:
 				/* TODO implement this*/
 				//simulator.flowQueue.remove(flow);
+				System.err.println("Flow event end " + flow.getSource()
+						+ "\tdest:"
+						+ flow.getDest()
+						+ "\t Start: "
+						+ flow.getStart() + "\t Bandwidth: "
+						+ flow.getBandwidth());
 				break;
 			case START:
-				Flow flow = flowEvent.getFlow();
 				allPaths = comPaths.getPaths(flow.getSource(), flow.getDest());
 				if (allPaths.isEmpty()) {
 					System.err.println("No path found for flow: source: " + flow.getSource()
 							+ "\tdest:"
-							+ flow.getDest());
+							+ flow.getDest()
+							+ "\t Start: "
+							+ flow.getStart() + "\t Bandwidth: "
+							+ flow.getBandwidth());
 				}
 
 				RandomPlacement.randomPlacement(flow, allPaths);
