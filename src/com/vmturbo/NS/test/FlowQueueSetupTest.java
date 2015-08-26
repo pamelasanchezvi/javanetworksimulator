@@ -72,7 +72,7 @@ public class FlowQueueSetupTest {
 	/**
 	 * Test method for {@link com.vmturbo.NS.FlowQueueSetup#populateQueue()}.
 	 */
-	@Test
+	/*@Test
 	public void testPopulateQueue() {
 		String fileName = "input/flowqueue";
 		FlowQueueSetup queueSetup = new FlowQueueSetup(fileName);
@@ -91,12 +91,12 @@ public class FlowQueueSetupTest {
 		assertEquals("Destination Host of second flow is incorrect", queue.get(1).getDest().getName(), "h2");
 		assertEquals("Destination Host of third flow is incorrect", queue.get(2).getDest().getName(), "h2");
 		assertEquals("Destination Host of fourth flow is incorrect", queue.get(3).getDest().getName(), "h2");
-	}
+	}*/
 
 	/**
 	 * Test method for {@link com.vmturbo.NS.FlowQueueSetup#populateQueue()}.
 	 */
-	@Test
+	/*@Test
 	public void testremoveFlow() {
 		String fileName = "input/flowqueue";
 		FlowQueueSetup queueSetup = new FlowQueueSetup(fileName);
@@ -114,5 +114,6 @@ public class FlowQueueSetupTest {
 		assertEquals("Destination Host of third flow is incorrect", queue.get(2).getDest().getName(), "h2");
 		
 	}
+	*/
 	
 }

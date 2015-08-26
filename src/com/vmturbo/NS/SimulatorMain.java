@@ -15,7 +15,7 @@ public class SimulatorMain {
 	ArrayList<ToRSwitch> torList;
 	ArrayList<Host> hostList;
 	ArrayList<Link> linkList;
-	ArrayList<Flow> flowQueue;
+	ArrayList<FlowEvent> flowQueue;
 	private double avgLinkUtilHosttoToR;
 	private double maxLinkUtilHosttoToR;
 	private double stdevLinkUtilHosttoToR;
@@ -145,26 +145,36 @@ public class SimulatorMain {
 
 		// find random placement
 		// find random placement
-		for (Flow flow : simulator.flowQueue) {
-			allPaths = comPaths.getPaths(flow.getSource(), flow.getDest());
-			if (allPaths.isEmpty()) {
-				System.err.println("No path found for flow: source: " + flow.getSource()
-						+ "\tdest:"
-						+ flow.getDest());
-			}
+		for (FlowEvent flowEvent : simulator.flowQueue) {
+			switch(flowEvent.getFlowEventType()){
+			case END:
+				/* TODO implement this*/
+				//simulator.flowQueue.remove(flow);
+				break;
+			case START:
+				Flow flow = flowEvent.getFlow();
+				allPaths = comPaths.getPaths(flow.getSource(), flow.getDest());
+				if (allPaths.isEmpty()) {
+					System.err.println("No path found for flow: source: " + flow.getSource()
+							+ "\tdest:"
+							+ flow.getDest());
+				}
 
-			RandomPlacement.randomPlacement(flow, allPaths);
+				RandomPlacement.randomPlacement(flow, allPaths);
 
-			simulator.calculateLinkUtil(topo.linkList);
-			System.out.println("Link Utilization after placing Flow: "
-					+ flow.getSource().getName()
-					+ " -> "
-					+ flow.getDest().getName()
-					+ " Flow bandwidth: " 
-					+ flow.getBandwidth());
-			simulator.printMetrics();   
-			//simulator.flowQueue.remove(flow);
-			// Timing implementation pending
+				simulator.calculateLinkUtil(topo.linkList);
+				System.out.println("Link Utilization after placing Flow: "
+						+ flow.getSource().getName()
+						+ " -> "
+						+ flow.getDest().getName()
+						+ " Flow bandwidth: " 
+						+ flow.getBandwidth());
+				simulator.printMetrics();   
+				break;
+			default:
+				break;
+			}			  
+			 
 		}
 	}
 
