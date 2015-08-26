@@ -146,11 +146,11 @@ public class SimulatorMain {
 		// find random placement
 		// find random placement
 		for (Flow flow : simulator.flowQueue) {
-			allPaths = comPaths.getPaths(flow.source, flow.dest);
+			allPaths = comPaths.getPaths(flow.getSource(), flow.getDest());
 			if (allPaths.isEmpty()) {
-				System.err.println("No path found for flow: source: " + flow.source
+				System.err.println("No path found for flow: source: " + flow.getSource()
 						+ "\tdest:"
-						+ flow.dest);
+						+ flow.getDest());
 			}
 
 			RandomPlacement.randomPlacement(flow, allPaths);
