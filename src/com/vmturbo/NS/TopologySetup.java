@@ -117,6 +117,15 @@ public class TopologySetup {
         }
         return null;
     }
+
+    private Link linkSearch(String src, String dest){
+        for (Link nxt: linkList){
+            if (nxt.exists(src, dest)){
+                return nxt;
+            }
+        }
+        return null;
+    }
     private void initSwitches(String linkPairs, String srcType, String srcName){
         // linkPair format is : " neighbor1, link capacity "
         //System.out.println("initSwitches cases" + srcType);
@@ -168,10 +177,13 @@ public class TopologySetup {
             if ((nextTor = torSearch(nextNeighbor)) == null){
                 nextTor = new ToRSwitch(nextNeighbor);
                 torList.add(nextTor);
+                spswitch.addtorSwitch(nextTor);
             }
-            Link newlink = new Link(spswitch, nextTor, capacity, 0.0, Link.LinkType.TORTOSPINE);
-            spswitch.addtorSwitch(nextTor);
-            linkList.add(newlink);
+            Link newlink = null;
+            if ((newlink = linkSearch(spswitch.getName(), nextTor.getName())) == null){
+                 newlink = new Link(spswitch, nextTor, capacity, 0.0, Link.LinkType.TORTOSPINE);
+                 linkList.add(newlink);
+            }
         }
 
 
@@ -201,9 +213,12 @@ public class TopologySetup {
                         nextsp = new SpineSwitch(nextNeighbor);
                         spineList.add(nextsp);
                     }
-                    newlink = new Link(torswitch, nextsp, capacity, 0.0, Link.LinkType.TORTOSPINE);
-                    torswitch.addSpine(nextsp);
-                    linkList.add(newlink);
+
+                    torswitch.addSpine(nextsp); // check if spine already on list spine switched  in ToR object
+                    if ((newlink = linkSearch(torswitch.getName(), nextsp.getName())) == null){
+                        newlink = new Link(torswitch, nextsp, capacity, 0.0, Link.LinkType.TORTOSPINE);
+                         linkList.add(newlink);
+                    }
                     break;
                 case "host":
                     Host nextHost = null;
@@ -212,9 +227,12 @@ public class TopologySetup {
                         nextHost.addtorSwitch(torswitch);
                         hostList.add(nextHost);
                     }
-                    newlink = new Link(torswitch, nextHost, capacity, 0.0, Link.LinkType.HOSTTOTOR);
-                    torswitch.addHost(nextHost);
-                    linkList.add(newlink);
+
+                    torswitch.addHost(nextHost);// check if spine already on list spine switched  in ToR object
+                    if ((newlink = linkSearch(torswitch.getName(), nextHost.getName())) == null){
+                        newlink = new Link(torswitch, nextHost, capacity, 0.0, Link.LinkType.HOSTTOTOR);
+                         linkList.add(newlink);
+                    }
                     break;
                 default:
                     break;
