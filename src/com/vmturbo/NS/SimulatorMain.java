@@ -107,7 +107,10 @@ public class SimulatorMain {
 		return stdevLinkUtilToRtoSpine;
 	}
 
-	public void printMetrics(){
+	public void printMetrics(ArrayList<Link> linkList){
+		for(Link link : linkList){
+			System.out.println("Link: " + link.getSrcNode().getName() + " -> " + link.getDestNode().getName() + " ,util: " + link.getUtilization());
+		}
 		System.out.println("Avg H to ToR: " + getAvgLinkUtilHostTor() 
 				+ "\tMax H to ToR: " + getMaxLinkUtilHostTor()
 				+ "\tStdev H to ToR: " + getStdevLinkUtilHostTor());
@@ -142,7 +145,7 @@ public class SimulatorMain {
 		// Initial link utilization
 		simulator.calculateLinkUtil(topo.linkList);
 		System.out.println("Link Utilization initially:");
-		simulator.printMetrics();
+		simulator.printMetrics(topo.linkList);
 
 		// find random placement
 		// find random placement
@@ -150,14 +153,15 @@ public class SimulatorMain {
 			Flow flow = flowEvent.getFlow();
 			switch(flowEvent.getFlowEventType()){
 			case END:
-				/* TODO implement this*/
-				//simulator.flowQueue.remove(flow);
+				flow.getPath().removeFlow(flow);
 				System.err.println("Flow event end " + flow.getSource()
 						+ "\tdest:"
 						+ flow.getDest()
 						+ "\t Start: "
 						+ flow.getStart() + "\t Bandwidth: "
 						+ flow.getBandwidth());
+				simulator.calculateLinkUtil(topo.linkList);
+				simulator.printMetrics(topo.linkList);   
 				break;
 			case START:
 				allPaths = comPaths.getPaths(flow.getSource(), flow.getDest());
@@ -170,16 +174,18 @@ public class SimulatorMain {
 							+ flow.getBandwidth());
 				}
 
-				RandomPlacement.randomPlacement(flow, allPaths);
-
+				Path pathSelected = RandomPlacement.randomPlacement(flow, allPaths);
+				pathSelected.placeFlow(flow);
+				
+				
 				simulator.calculateLinkUtil(topo.linkList);
-				System.out.println("Link Utilization after placing Flow: "
+				System.err.println("Link Utilization after placing Flow: "
 						+ flow.getSource().getName()
 						+ " -> "
 						+ flow.getDest().getName()
 						+ " Flow bandwidth: " 
 						+ flow.getBandwidth());
-				simulator.printMetrics();   
+				simulator.printMetrics(topo.linkList);   
 				break;
 			default:
 				break;
