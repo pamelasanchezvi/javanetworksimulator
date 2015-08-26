@@ -10,7 +10,7 @@ import java.util.Random;
 public class RandomPlacement {
 
     /**
-     * 
+     * All placement algorithms only give recommendations without actual act of placement
      * @param flow: the flow that needs placement
      * @param allPaths: a list of all paths in the network, regardless of usage
      * @return: a randomly chosen path  
@@ -33,18 +33,8 @@ public class RandomPlacement {
         else { // choose a random path
             Random rand = new Random();
             int n = rand.nextInt(paths.size());
-            Path path = paths.get(n);
-            //not sure if the actual placement should be carried out here
-            //or should placement algorithm only give recommendations?
-            if (path.placeFlow(flow) == 0) { //if selling is successful
-                return path;
-            }
-            else {
-                System.out.println("selling failed between: \n" +
-                                   flow.toString() + "\n" +
-                                   path.toString());
-                return null;
-            }
+            return paths.get(n);
+
         }
     }
 
