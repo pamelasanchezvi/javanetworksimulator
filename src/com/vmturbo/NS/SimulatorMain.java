@@ -174,7 +174,8 @@ public class SimulatorMain {
 							+ flow.getBandwidth());
 				}
 
-				Path pathSelected = RandomPlacement.randomPlacement(flow, allPaths);
+				//Path pathSelected = RandomPlacement.randomPlacement(flow, allPaths);
+				Path pathSelected = EconomicPlacement.econPlacement(flow, allPaths);
 				pathSelected.placeFlow(flow);
 				
 				
