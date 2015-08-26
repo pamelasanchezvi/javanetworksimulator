@@ -82,7 +82,7 @@ public class Path {
 
 
     /**
-     * used for economic placement
+     * 
      * @param flow
      * @return 0 if successful, -1 unsuccessful
      */
@@ -102,11 +102,12 @@ public class Path {
              */
             link.setUtilization(link.getUtilization() + demand);
         }
+        flow.setPath(this); //set flow's path to be "this" so that flow remembers it later
         return 0;
     }
 
     /**
-     * used for economic placement
+     * 
      * @param flow
      * @return 0 if successful, -1 unsuccessful
      */
@@ -114,10 +115,15 @@ public class Path {
         if (!flow.getSource().equals(source) || !flow.getDest().equals(dest)) {
             return -1;
         }
+        //if flow has never been placed on this path, we can't remove it
+        if (flow.getPath() == null || !flow.getPath().equals(this)) {
+            return -1;
+        }
         double demand = flow.getBandwidth();
         for (Link link : links) {
             link.setUtilization(Math.max(0, link.getUtilization() - demand));
         }
+        flow.setPath(null); //reset flow's path to be "null"
         return 0;
     }
 
@@ -136,11 +142,11 @@ public class Path {
         SpineSwitch spine = new SpineSwitch("spine");
         spine.addtorSwitch(tor1);
         spine.addtorSwitch(tor2);
-        Link l1 = new Link(a, tor1, 1, 0.5);
-        Link l2 = new Link(tor1, b, 1, 0.5);
-        Link l3 = new Link(tor1, spine, 10, 0);
-        Link l4 = new Link(spine, tor2, 10, 0);
-        Link l5 = new Link(tor2, c, 1, 0.5);
+        Link l1 = new Link(a, tor1, 1, 0.5, null);
+        Link l2 = new Link(tor1, b, 1, 0.5, null);
+        Link l3 = new Link(tor1, spine, 10, 0, null);
+        Link l4 = new Link(spine, tor2, 10, 0, null);
+        Link l5 = new Link(tor2, c, 1, 0.5, null);
 
 
 
@@ -166,13 +172,13 @@ public class Path {
 
         //test getQuote()
         Flow f1 = new Flow(a, b, 0, 10, 0.1);
-        System.out.println(p1.getQuote(f1));  //should print 12
+        System.out.println(p1.getQuote(f1));  //should print 12.5
         Flow f2 = new Flow(a, b, 0, 10, 0.4);
         System.out.println(p1.getQuote(f2));  //should print 200
         Flow f3 = new Flow(a, b, 0, 10, 0.7);
         System.out.println(p1.getQuote(f3));  //should print -1
         Flow f4 = new Flow(a, c, 0, 10, 0.1);
-        System.out.println(p2.getQuote(f4));  //should print 14
+        System.out.println(p2.getQuote(f4));  //should print 14.54
 
 
         //test placeFlow() and removeFlow()
@@ -196,10 +202,13 @@ public class Path {
 
 
 
-        System.out.println(p1.getQuote(f4)); //"-1", since p1 doesn't match f4
+        System.out.println(p1.getQuote(f4)); //"-1.0", since p1 doesn't match f4
         System.out.println(p1.placeFlow(f4)); //"-1"
         System.out.println(p1.removeFlow(f4)); //"-1"
-
+        System.out.println(p1.removeFlow(f1)); //"-1", since f1 is not placed on p1 first
+        System.out.println(p1.placeFlow(f1)); //"0"
+        System.out.println(p2.removeFlow(f1)); //"-1"
+        System.out.println(p1.removeFlow(f1)); //"0"
 
 
     }
