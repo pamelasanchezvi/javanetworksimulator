@@ -5,10 +5,12 @@ package com.vmturbo.NS;
 
 public class Flow {
 
-    Host source, dest;
-    int start, duration; //in seconds
-    double bandwidth; //bandwidth of the flow
-    double budget; // the budge the flow has, in virtual dollars
+    private Host source, dest;
+    private int start, duration; //in seconds
+    private double bandwidth; //bandwidth of the flow
+    private double budget; // the budge the flow has, in virtual dollars
+
+    private Path assignedPath; //an optional field for flow to remember its assignedPath
 
     //constructor: assuming infinite budget for now
     public Flow(Host source, Host dest, int start, int duration, double bandwidth /*, int budget*/) {
@@ -58,6 +60,16 @@ public class Flow {
                 + bandwidth + " Gb/s; "
         //+ budget + " $;" 
         );
+    }
+
+    //This method allows flow to remember its path
+    //It does NOT place the flow to path, which is done by placeFlow() in Path.java.
+    public void setPath(Path path) {
+        this.assignedPath = path;
+    }
+
+    public Path getPath() {
+        return this.assignedPath;
     }
 
     /** for testing purpose
