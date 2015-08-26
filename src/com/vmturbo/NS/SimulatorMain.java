@@ -23,8 +23,8 @@ public class SimulatorMain {
 	private double maxLinkUtilToRtoSpine;
 	private double stdevLinkUtilToRtoSpine;
 
-	private static String TOPOFILE = "input/topology";
-	private static String QUEUEFILE = "input/flowqueue";
+	private static String TOPOFILE = "input/symmetric-topology";
+	private static String QUEUEFILE = "input/flow-sameTime";
 
 	/**
 	 * Calculate average, max and std dev of link utilization
@@ -174,8 +174,8 @@ public class SimulatorMain {
 							+ flow.getBandwidth());
 				}
 
-				//Path pathSelected = RandomPlacement.randomPlacement(flow, allPaths);
-				Path pathSelected = EconomicPlacement.econPlacement(flow, allPaths);
+				Path pathSelected = RandomPlacement.randomPlacement(flow, allPaths);
+				//Path pathSelected = EconomicPlacement.econPlacement(flow, allPaths);
 				pathSelected.placeFlow(flow);
 				
 				
