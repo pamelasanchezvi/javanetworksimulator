@@ -233,6 +233,11 @@ public class TopologySetup {
                         newlink = new Link(torswitch, nextHost, capacity, 0.0, Link.LinkType.HOSTTOTOR);
                          linkList.add(newlink);
                     }
+                    newlink = null;
+                    if ((newlink = linkSearch(nextHost.getName(), torswitch.getName())) == null){
+                        newlink = new Link(nextHost, torswitch, capacity, 0.0, Link.LinkType.HOSTTOTOR);
+                         linkList.add(newlink);
+                    }
                     break;
                 default:
                     break;
