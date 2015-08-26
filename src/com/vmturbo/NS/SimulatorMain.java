@@ -164,6 +164,7 @@ public class SimulatorMain {
 					+ flow.getBandwidth());
 			simulator.printMetrics();   
 			//simulator.flowQueue.remove(flow);
+			// Timing implementation pending
 		}
 	}
 
