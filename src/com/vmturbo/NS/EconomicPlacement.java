@@ -16,7 +16,7 @@ public class EconomicPlacement {
     public static Path econPlacement(Flow flow, ArrayList<Path> allPaths) {
 
         //find only paths that match the source-destination of the flow
-        ArrayList<Path> paths = new ArrayList<Path>();
+        ArrayList<Path> paths = new ArrayList<>();
         for (Path path : allPaths) {
             if (path.getSource().equals(flow.getSource()) &&
                 path.getDest().equals(flow.getDest())) {
@@ -31,7 +31,7 @@ public class EconomicPlacement {
         }
 
         //find cheapest path
-        double minQuote = Double.MAX_VALUE;
+        double minQuote = 200001.0;//to approximate infinity, because Double.MAX_VALUE is problematic
         int pathNo = 0;
         for (int i = 0; i < paths.size(); i++) {
             double quote = paths.get(i).getQuote(flow);
@@ -41,11 +41,6 @@ public class EconomicPlacement {
                 pathNo = i;
             }
         }
-        /**if at the end, minQuote is still Double.Max_Value, 
-         * it means that no path can accommodate the flow, 
-         * but we assume this won't happen. 
-         * Given that flow has infinite budget now, it will always be able to buy cheapest path
-         */
 
 
         //check if flow has enough budget for the cheapest path
@@ -54,9 +49,9 @@ public class EconomicPlacement {
 
         }
         else {
-            System.out.println("not enough budget: \n" +
+            System.out.println("insufficient budget: \n" +
                                flow.toString() + "\n" +
-                               "minimum Quote is " + minQuote);
+                               "minimum quote is " + minQuote + " $");
             return null;
         }
 

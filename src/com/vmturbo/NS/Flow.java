@@ -8,7 +8,7 @@ public class Flow {
     private Host source, dest;
     private int start, duration; //in seconds
     private double bandwidth; //bandwidth of the flow
-    private double budget; // the budge the flow has, in virtual dollars
+    private double budget; // the budget the flow has, in virtual dollars
 
     private Path assignedPath; //an optional field for flow to remember its assignedPath
 
@@ -19,7 +19,7 @@ public class Flow {
         this.start = start;
         this.duration = duration;
         this.bandwidth = bandwidth;
-        this.budget = Double.MAX_VALUE;
+        this.budget = 200000.0; //Double.MAX_VALUE is problematic, so we use 200k to approximate infinity
     }
 
     public Host getSource() {
@@ -58,8 +58,7 @@ public class Flow {
                 + "starts: " + getStart() + "s; "
                 + "duration: " + getDuration() + "s; "
                 + bandwidth + " Gb/s; "
-        //+ budget + " $;" 
-        );
+                + budget + " $;");
     }
 
     //This method allows flow to remember its path

@@ -18,7 +18,7 @@ public class RandomPlacement {
     public static Path randomPlacement(Flow flow, ArrayList<Path> allPaths) {
 
         //find only paths that match the source-destination of the flow
-        ArrayList<Path> paths = new ArrayList<Path>();
+        ArrayList<Path> paths = new ArrayList<>();
         for (Path path : allPaths) {
             if (path.getSource().equals(flow.getSource()) &&
                 path.getDest().equals(flow.getDest())) {

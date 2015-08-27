@@ -38,16 +38,16 @@ public class Path {
 
     @Override
     public String toString() {
+        String s = "path: " + source.getName();
         if (links == null) {
-            return ("path: " + source.getName() + " -> " + dest.getName());
+            s += " -> " + dest.getName();
         }
         else {
-            String s = "path: " + source.getName();
             for (Link link : links) {
                 s += " -> " + link.getDestNode().getName();
             }
-            return s;
         }
+        return s;
     }
 
 
@@ -150,11 +150,11 @@ public class Path {
 
 
 
-        ArrayList<Link> links1 = new ArrayList<Link>();
+        ArrayList<Link> links1 = new ArrayList<>();
         links1.add(l1);
         links1.add(l2);
 
-        ArrayList<Link> links2 = new ArrayList<Link>();
+        ArrayList<Link> links2 = new ArrayList<>();
         links2.add(l1);
         links2.add(l3);
         links2.add(l4);
@@ -163,7 +163,7 @@ public class Path {
 
         Path p1 = new Path(a, b, links1);
         Path p2 = new Path(a, c, links2);
-        ArrayList<Path> paths = new ArrayList<Path>();
+        ArrayList<Path> paths = new ArrayList<>();
         paths.add(p1);
         paths.add(p2);
 
@@ -197,7 +197,7 @@ public class Path {
         System.out.println(l3.getUtilization());  //"0.0"
         p2.placeFlow(f4);
         System.out.println(l3.getUtilization());  //"0.1"
-        p2.removeFlow(f4);
+        f4.getPath().removeFlow(f4); //equivalent to: p2.removeFlow(f4)
         System.out.println(l3.getUtilization());  //"0.0"
 
 

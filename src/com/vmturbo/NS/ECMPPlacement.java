@@ -15,7 +15,7 @@ public class ECMPPlacement {
 
         //Filter out paths that don't match source-destination of the flow
         //And find the shortest number of hops
-        ArrayList<Path> paths = new ArrayList<Path>();
+        ArrayList<Path> paths = new ArrayList<>();
         int minHops = Integer.MAX_VALUE;
         for (Path path : allPaths) {
             if (path.getSource().equals(flow.getSource()) &&
@@ -34,7 +34,7 @@ public class ECMPPlacement {
         }
 
         //Choose randomly among the shortest paths
-        ArrayList<Path> shortPaths = new ArrayList<Path>();
+        ArrayList<Path> shortPaths = new ArrayList<>();
         for (Path path : paths) {
             if (path.getNumHops() == minHops) {
                 shortPaths.add(path);
