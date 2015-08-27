@@ -41,8 +41,7 @@ public class ComputePaths {
      * Main method for computing paths for all pairs
      * This method only works for leaf-spine architecture.
      * For general graphs, we need something like BFS.
-     * For now, it only considers obvious paths, 
-     * e.g. host->tor->host, or host->tor->spine->tor->host.
+     * For now, it only considers paths that contain 0 or 1 spine.
      * Later, we will consider paths that bounce off multiple spines.
      * @param spines
      * @param tors
@@ -87,15 +86,19 @@ public class ComputePaths {
         for (ToRSwitch tor1 : tors1) {
             for (ToRSwitch tor2 : tors2) {
                 if (tor1.equals(tor2)) {
-                    //add path: h1->tor1->h2 to the cell (h1,h2)
-                    ArrayList<Link> pathLinks = new ArrayList<Link>();
-                    Link l1 = findLink(h1, tor1);
-                    Link l2 = findLink(tor1, h2);
-                    if (l1 != null && pathLinks.add(l1) &&
-                        l2 != null && pathLinks.add(l2)) {
-                        Path newPath = new Path(h1, h2, pathLinks);
-                        getPaths(h1, h2).add(newPath);
+                    //add path: h1->tor1->h2 to the cell (h1,h2)                    
+                    ArrayList<Link> l1s = findLinks(h1, tor1);
+                    ArrayList<Link> l2s = findLinks(tor1, h2);
+                    for (Link l1 : l1s) {
+                        for (Link l2 : l2s) {
+                            ArrayList<Link> pathLinks = new ArrayList<>();
+                            pathLinks.add(l1);
+                            pathLinks.add(l2);
+                            Path newPath = new Path(h1, h2, pathLinks);
+                            getPaths(h1, h2).add(newPath);
+                        }
                     }
+
 
                 }
                 else { // find common spines connected to both tor1 and tor2
@@ -106,17 +109,24 @@ public class ComputePaths {
                     for (SpineSwitch spine : spines1) {
                         if (spines2.contains(spine)) {
                             //add path: h1->tor1->spine->tor2->h2
-                            ArrayList<Link> pathLinks = new ArrayList<Link>();
-                            Link l1 = findLink(h1, tor1);
-                            Link l2 = findLink(tor1, spine);
-                            Link l3 = findLink(spine, tor2);
-                            Link l4 = findLink(tor2, h2);
-                            if (l1 != null && pathLinks.add(l1) &&
-                                l2 != null && pathLinks.add(l2) &&
-                                l3 != null && pathLinks.add(l3) &&
-                                l4 != null && pathLinks.add(l4)) {
-                                Path newPath = new Path(h1, h2, pathLinks);
-                                getPaths(h1, h2).add(newPath);
+                            ArrayList<Link> l1s = findLinks(h1, tor1);
+                            ArrayList<Link> l2s = findLinks(tor1, spine);
+                            ArrayList<Link> l3s = findLinks(spine, tor2);
+                            ArrayList<Link> l4s = findLinks(tor2, h2);
+                            for (Link l1 : l1s) {
+                                for (Link l2 : l2s) {
+                                    for (Link l3 : l3s) {
+                                        for (Link l4 : l4s) {
+                                            ArrayList<Link> pathLinks = new ArrayList<>();
+                                            pathLinks.add(l1);
+                                            pathLinks.add(l2);
+                                            pathLinks.add(l3);
+                                            pathLinks.add(l4);
+                                            Path newPath = new Path(h1, h2, pathLinks);
+                                            getPaths(h1, h2).add(newPath);
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
@@ -126,21 +136,24 @@ public class ComputePaths {
     }
 
 
+
     /**
-     * helper function: 
-     * find the link from node1 to node2 by looping through all links
+     * Helper function: 
+     * find links from node1 to node2 by looping through all links
+     * (there might be multiple/parallel links between the same source and destination)
      * @param n1: source node
      * @param n2: destination node
      * @return
      */
-    private Link findLink(Node n1, Node n2) {
+    private ArrayList<Link> findLinks(Node n1, Node n2) {
+        ArrayList<Link> multiLinks = new ArrayList<>();
         for (Link link : links) {
             if (link.getSrcNode().equals(n1) &&
                 link.getDestNode().equals(n2)) {
-                return link;
+                multiLinks.add(link);
             }
         }
-        return null;
+        return multiLinks;
     }
 
     /**
@@ -150,6 +163,13 @@ public class ComputePaths {
      */
     public ArrayList<Path> getPaths(Host source, Host dest) {
         return matrix.get(source).get(dest);
+    }
+
+    //need implementation
+    @Override
+    public String toString() {
+
+        return "";
     }
 
     ///**for testing 
@@ -193,8 +213,14 @@ public class ComputePaths {
         Link l3 = new Link(tor1, spine1, 10, 1.2, null);
         Link l3r = new Link(spine1, tor1, 10, 0, null);
 
+        Link l3a = new Link(tor1, spine1, 10, 0, null);
+        Link l3ar = new Link(spine1, tor1, 10, 0, null);
+
         Link l4 = new Link(tor2, spine1, 10, 0, null);
         Link l4r = new Link(spine1, tor2, 10, 0, null);
+
+        Link l4a = new Link(tor2, spine1, 10, 0, null);
+        Link l4ar = new Link(spine1, tor2, 10, 0, null);
 
         Link l5 = new Link(c, tor2, 1, 0, null);
         Link l5r = new Link(tor2, c, 1, 0, null);
@@ -208,10 +234,10 @@ public class ComputePaths {
         Link l8 = new Link(tor2, spine2, 10, 0, null);
         Link l8r = new Link(spine2, tor2, 10, 0, null);
 
-        ArrayList<Host> hosts = new ArrayList<Host>();
-        ArrayList<Link> links = new ArrayList<Link>();
-        ArrayList<ToRSwitch> tors = new ArrayList<ToRSwitch>();
-        ArrayList<SpineSwitch> spines = new ArrayList<SpineSwitch>();
+        ArrayList<Host> hosts = new ArrayList<>();
+        ArrayList<Link> links = new ArrayList<>();
+        ArrayList<ToRSwitch> tors = new ArrayList<>();
+        ArrayList<SpineSwitch> spines = new ArrayList<>();
         hosts.add(a);
         hosts.add(b);
         hosts.add(c);
@@ -234,6 +260,11 @@ public class ComputePaths {
         links.add(l7r);
         links.add(l8);
         links.add(l8r);
+
+        links.add(l3a);
+        links.add(l3ar);
+        links.add(l4a);
+        links.add(l4ar);
 
         //=========testing findPaths()========================
         ComputePaths pathsComputer = new ComputePaths(spines, tors, hosts, links);
