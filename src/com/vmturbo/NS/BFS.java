@@ -22,7 +22,10 @@ public class BFS {
     private HashMap<Node, Node> predecessor;
 
 
-
+    /**
+     * BFS shouldn't be run on hosts, since a host can't be an intermediate node in a path 
+     * @param nodes: only switches, NO hosts
+     */
     public BFS(ArrayList<Node> nodes) {
         this.nodes = nodes;
         color = new HashMap<>();
@@ -31,7 +34,7 @@ public class BFS {
         matrix = new HashMap<>();
     }
 
-    public void findPaths() {
+    public void run() {
         for (Node source : nodes) {
             runBFS(source);
             HashMap<Node, Integer> row = new HashMap<>();
@@ -68,11 +71,14 @@ public class BFS {
 
     private ArrayList<Node> getNeighbors(Node node) {
         ArrayList<Node> neighbors = new ArrayList<>();
+
+        /**
         if (node instanceof Host) {
             neighbors.addAll(((Host)node).getToRSwitch());
         }
+        */
         if (node instanceof ToRSwitch) {
-            neighbors.addAll(((ToRSwitch)node).getHostList());
+            //neighbors.addAll(((ToRSwitch)node).getHostList());
             neighbors.addAll(((ToRSwitch)node).getSpineList());
         }
         if (node instanceof SpineSwitch) {
@@ -81,10 +87,14 @@ public class BFS {
         return neighbors;
     }
 
+    public int getDistance(Node n1, Node n2) {
+        return matrix.get(n1).get(n2);
+    }
+
     public void print() {
-        System.out.println(matrix.keySet());
+        System.out.println("  " + matrix.keySet());
         for (Node source : matrix.keySet()) {
-            String s = "";
+            String s = source.getName() + ": ";
             for (Node dest : matrix.get(source).keySet()) {
                 s += matrix.get(source).get(dest) + "  ";
             }
@@ -92,103 +102,41 @@ public class BFS {
         }
     }
 
+
     public static void main(String[] args) {
-        Host a = new Host("a");
-        Host b = new Host("b");
-        Host c = new Host("c");
-
-        ToRSwitch tor1 = new ToRSwitch("tor1");
-        ToRSwitch tor2 = new ToRSwitch("tor2");
-        tor1.addHost(a);
-        tor1.addHost(b);
-        tor2.addHost(b);
-        tor2.addHost(c);
-        a.addtorSwitch(tor1);
-        b.addtorSwitch(tor1);
-        b.addtorSwitch(tor2);
-        c.addtorSwitch(tor2);
-
-        SpineSwitch spine1 = new SpineSwitch("spine1");
-        SpineSwitch spine2 = new SpineSwitch("spine2");
-        spine1.addtorSwitch(tor1);
-        spine1.addtorSwitch(tor2);
-        spine2.addtorSwitch(tor1);
-        spine2.addtorSwitch(tor2);
-        tor1.addSpine(spine1);
-        tor1.addSpine(spine2);
-        tor2.addSpine(spine1);
-        tor2.addSpine(spine2);
 
 
-        Link l1 = new Link(a, tor1, 1, 0, null);
-        Link l1r = new Link(tor1, a, 1, 0, null);
+        ToRSwitch tor1 = new ToRSwitch("1");
+        ToRSwitch tor2 = new ToRSwitch("2");
+        ToRSwitch tor3 = new ToRSwitch("3");
 
-        Link l2 = new Link(b, tor1, 1, 0, null);
-        Link l2r = new Link(tor1, b, 1, 0, null);
+        SpineSwitch spineA = new SpineSwitch("A");
+        SpineSwitch spineB = new SpineSwitch("B");
 
-        Link l3 = new Link(tor1, spine1, 10, 1.2, null);
-        Link l3r = new Link(spine1, tor1, 10, 0, null);
+        spineA.addtorSwitch(tor1);
+        spineA.addtorSwitch(tor2);
+        spineB.addtorSwitch(tor1);
+        spineB.addtorSwitch(tor3);
+        tor1.addSpine(spineA);
+        tor1.addSpine(spineB);
+        tor2.addSpine(spineA);
+        tor3.addSpine(spineB);
 
-        //Link l3a = new Link(tor1, spine1, 10, 0, null);
-        //Link l3ar = new Link(spine1, tor1, 10, 0, null);
-
-        Link l4 = new Link(tor2, spine1, 10, 0, null);
-        Link l4r = new Link(spine1, tor2, 10, 0, null);
-
-        //Link l4a = new Link(tor2, spine1, 10, 0, null);
-        //Link l4ar = new Link(spine1, tor2, 10, 0, null);
-
-        //Link l4b = new Link(tor2, spine1, 10, 0, null);
-        //Link l4br = new Link(spine1, tor2, 10, 0, null);
-
-        Link l5 = new Link(c, tor2, 1, 0, null);
-        Link l5r = new Link(tor2, c, 1, 0, null);
-
-        Link l6 = new Link(b, tor2, 1, 0, null);
-        Link l6r = new Link(tor2, b, 1, 0, null);
-
-        Link l7 = new Link(tor1, spine2, 10, 1.25, null);
-        Link l7r = new Link(spine2, tor1, 10, 0, null);
-
-        Link l8 = new Link(tor2, spine2, 10, 0, null);
-        Link l8r = new Link(spine2, tor2, 10, 0, null);
-
-
-        ArrayList<Host> hosts = new ArrayList<>();
-        ArrayList<Link> links = new ArrayList<>();
         ArrayList<ToRSwitch> tors = new ArrayList<>();
         ArrayList<SpineSwitch> spines = new ArrayList<>();
-        hosts.add(a);
-        hosts.add(b);
-        hosts.add(c);
         tors.add(tor1);
         tors.add(tor2);
-        spines.add(spine1);
-        spines.add(spine2);
-        links.add(l1);
-        links.add(l1r);
-        links.add(l2);
-        links.add(l2r);
-        links.add(l3);
-        links.add(l3r);
-        links.add(l4);
-        links.add(l4r);
-        links.add(l5);
-        links.add(l5r);
-        links.add(l6);
-        links.add(l6r);
-        links.add(l7);
-        links.add(l7r);
-        links.add(l8);
-        links.add(l8r);
+        tors.add(tor3);
+        spines.add(spineA);
+        spines.add(spineB);
 
         ArrayList<Node> allNodes = new ArrayList<>();
-        allNodes.addAll(hosts);
         allNodes.addAll(tors);
         allNodes.addAll(spines);
 
         BFS bfs = new BFS(allNodes);
-        bfs.findPaths();
+        bfs.run();
         bfs.print();
     }
+
 }
