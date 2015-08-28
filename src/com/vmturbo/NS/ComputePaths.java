@@ -213,14 +213,17 @@ public class ComputePaths {
         Link l3 = new Link(tor1, spine1, 10, 1.2, null);
         Link l3r = new Link(spine1, tor1, 10, 0, null);
 
-        Link l3a = new Link(tor1, spine1, 10, 0, null);
-        Link l3ar = new Link(spine1, tor1, 10, 0, null);
+        //Link l3a = new Link(tor1, spine1, 10, 0, null);
+        //Link l3ar = new Link(spine1, tor1, 10, 0, null);
 
         Link l4 = new Link(tor2, spine1, 10, 0, null);
         Link l4r = new Link(spine1, tor2, 10, 0, null);
 
-        Link l4a = new Link(tor2, spine1, 10, 0, null);
-        Link l4ar = new Link(spine1, tor2, 10, 0, null);
+        //Link l4a = new Link(tor2, spine1, 10, 0, null);
+        //Link l4ar = new Link(spine1, tor2, 10, 0, null);
+
+        //Link l4b = new Link(tor2, spine1, 10, 0, null);
+        //Link l4br = new Link(spine1, tor2, 10, 0, null);
 
         Link l5 = new Link(c, tor2, 1, 0, null);
         Link l5r = new Link(tor2, c, 1, 0, null);
@@ -233,6 +236,7 @@ public class ComputePaths {
 
         Link l8 = new Link(tor2, spine2, 10, 0, null);
         Link l8r = new Link(spine2, tor2, 10, 0, null);
+
 
         ArrayList<Host> hosts = new ArrayList<>();
         ArrayList<Link> links = new ArrayList<>();
@@ -261,10 +265,13 @@ public class ComputePaths {
         links.add(l8);
         links.add(l8r);
 
-        links.add(l3a);
-        links.add(l3ar);
-        links.add(l4a);
-        links.add(l4ar);
+        //links.add(l3a);
+        //links.add(l3ar);
+        //links.add(l4a);
+        //links.add(l4ar);
+        //links.add(l4b);
+        //links.add(l4br);
+
 
         //=========testing findPaths()========================
         ComputePaths pathsComputer = new ComputePaths(spines, tors, hosts, links);
