@@ -73,7 +73,6 @@ public class TopologySetup {
             FileReader filereader = new FileReader(fileName);
             BufferedReader bufferedReader = new BufferedReader(filereader);
             while((line = bufferedReader.readLine()) != null){
-                //System.out.println("going line by line" + line);
                 String delims = ";";
                 StringTokenizer str = new StringTokenizer(line, delims);
                 while(str.hasMoreElements()){
@@ -81,10 +80,8 @@ public class TopologySetup {
                     switchType = str.nextToken().trim();
                     neighborsLine = str.nextToken().trim();
                 }
-                //System.out.println("before initSwitches");
                 // error if name , type or neighbors line was null?
                 initSwitches(neighborsLine, switchType, switchname);
-
             }
             bufferedReader.close();
         }
@@ -126,30 +123,34 @@ public class TopologySetup {
         }
         return null;
     }
+
+
+    /**
+     *  initializes switch objects as needed:
+     *
+     *  @param linkPairs - string list of neighbors to the switch described by this line
+     *  @param srcType - type of switch we are creating in this function
+     *  @param srcName - name of switch we are creating in this function
+     */
     private void initSwitches(String linkPairs, String srcType, String srcName){
-        // linkPair format is : " neighbor1, link capacity "
-        //System.out.println("initSwitches cases" + srcType);
         switch (srcType) {
             case "spine":
-                //System.out.println("case spine");
                 SpineSwitch newspine=null;
 
                 if ((newspine = spineSearch(srcName)) == null) {
                     newspine = new SpineSwitch(srcName);
-                    //System.out.println("case spine adding");
                     spineList.add(newspine);
                 }
                 // look for neighbors
                 parseSpineNeighbors(linkPairs, newspine);
                 break;
             case "tor":
-                //System.out.println("case tor");
                 ToRSwitch newtor = null;
                 if ((newtor = torSearch(srcName)) == null) {
                     newtor = new ToRSwitch(srcName);
-                    //System.out.println("case tor adding");
                     torList.add(newtor);
                 }
+                // look for neighbors
                 parseLeafToRNeighbors(linkPairs, newtor);
                 break;
 
@@ -158,8 +159,9 @@ public class TopologySetup {
         }
     }
 
-    /*
-     *  for each line takes the spineswitch neighbor list
+    /**
+     *  for each newline containing spine's information:
+     *  takes the spineswitch neighbor list,
      *  adds new tor switches to global torlist
      *  adds new tor switches to spine object's torlist
      */
@@ -188,12 +190,24 @@ public class TopologySetup {
             Link newlink = null;
             newlink = new Link(spswitch, nextTor, capacity, 0.0, Link.LinkType.TORTOSPINE);
             linkList.add(newlink);
+            newlink = new Link(nextTor, spswitch, capacity, 0.0, Link.LinkType.TORTOSPINE);
+            linkList.add(newlink);
         }
 
 
 
     }
 
+    /**
+     *  for each newline containing ToR's information:
+     *  takes the ToRswitch neighbor list,
+     *  adds new host blades to global hostlist
+     *  adds new host blades to specific ToR object's hostlist
+     *
+     *  @param linkp
+     *  @param torswitch
+     *  @return void
+     */
     private void parseLeafToRNeighbors(String linkp, ToRSwitch torswitch) {
 
         String delims = "|";
@@ -254,6 +268,13 @@ public class TopologySetup {
 
 
     }
+
+    /**
+     * method returns Host object for a given host name
+     *
+     * @param hostName
+     * @return Host object
+     */
     public Host getHost(String hostName){
         for (Host host: hostList){
             if (host.getName().equals(hostName)){
