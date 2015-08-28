@@ -1,0 +1,6 @@
+spsw0; spine; tor0,tor, 10 | tor0,tor, 10 | tor1, tor,10 | tor2, tor,10
+spsw1; spine; tor1,tor, 10 | tor1, tor,10 | tor0,tor, 10 | tor2, tor,10
+spsw2; spine; tor2,tor, 10 | tor2, tor,10 | tor0,tor, 10 | tor1, tor,10
+tor0; tor; spsw0, spine, 10 |spsw1, spine, 10 | spsw2, spine, 10 | h1, host,1 | h2, host, 1| h3, host,1 | h4, host, 1| h5, host,1 | h6, host, 1| h7, host,1 | h8, host, 1| h9, host,1 | h10, host, 1| h11, host,1 | h12, host, 1
+tor1; tor; spsw1, spine, 40 | spsw2, spine, 10 | h13, host,1 | h14, host, 1| h15, host,1 | h16, host, 1| h17, host,1 | h18, host, 1| h19, host, 1| h20, host,1 | h21, host, 1| h22, host, 1| h23, host,1 | h24, host, 1
+tor2; tor; spsw1, spine, 10 | spsw2, spine, 40 | h25, host,1 | h26, host, 1| h27, host,1 | h28, host, 1| h29, host, 1| h30, host,1 | h31, host, 1| h32, host, 1| h33, host,1 | h34, host, 1| h35, host, 1| h36, host, 1
