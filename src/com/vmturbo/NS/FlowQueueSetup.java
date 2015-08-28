@@ -47,7 +47,7 @@ public class FlowQueueSetup {
 				
 				readLine.trim();
 				flowData = readLine.split(";");
-
+				
 				if(flowData.length == 5){
 					// construct Flow object
 					startTime = Integer.parseInt(flowData[0].trim());
@@ -65,7 +65,7 @@ public class FlowQueueSetup {
 					addFlowEvent(endEvent);
 				} else {
 					reader.close();
-					throw new IllegalArgumentException();
+					throw new IllegalArgumentException("Number of arguments in flow queue is not 5");
 				}
 			}
 			reader.close();
