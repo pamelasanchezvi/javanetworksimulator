@@ -179,6 +179,7 @@ public class TopologySetup {
                 torList.add(nextTor);
                 spswitch.addtorSwitch(nextTor);
             }
+            // if there are more than one connections between a given spine and tor
             Link newlink = null;
             if ((newlink = linkSearch(spswitch.getName(), nextTor.getName())) == null){
                  newlink = new Link(spswitch, nextTor, capacity, 0.0, Link.LinkType.TORTOSPINE);
