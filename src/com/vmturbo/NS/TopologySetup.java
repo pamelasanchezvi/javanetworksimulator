@@ -158,6 +158,11 @@ public class TopologySetup {
         }
     }
 
+    /*
+     *  for each line takes the spineswitch neighbor list
+     *  adds new tor switches to global torlist
+     *  adds new tor switches to spine object's torlist
+     */
     private void parseSpineNeighbors(String linkp, SpineSwitch spswitch) {
 
         String delims = "|";
@@ -181,10 +186,8 @@ public class TopologySetup {
             }
             // if there are more than one connections between a given spine and tor
             Link newlink = null;
-            if ((newlink = linkSearch(spswitch.getName(), nextTor.getName())) == null){
-                 newlink = new Link(spswitch, nextTor, capacity, 0.0, Link.LinkType.TORTOSPINE);
-                 linkList.add(newlink);
-            }
+            newlink = new Link(spswitch, nextTor, capacity, 0.0, Link.LinkType.TORTOSPINE);
+            linkList.add(newlink);
         }
 
 

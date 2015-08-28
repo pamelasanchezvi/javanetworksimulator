@@ -27,7 +27,7 @@ public class TopologySetupTests {
      */
     @Before
     public void setUp() throws Exception {
-        filename = "input/topology";
+        filename = "input/topo1";
     }
 
     /**
