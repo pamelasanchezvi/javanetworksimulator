@@ -87,8 +87,8 @@ public class ComputePaths {
             for (ToRSwitch tor2 : tors2) {
                 if (tor1.equals(tor2)) {
                     //add path: h1->tor1->h2 to the cell (h1,h2)                    
-                    ArrayList<Link> l1s = findLinks(h1, tor1);
-                    ArrayList<Link> l2s = findLinks(tor1, h2);
+                    ArrayList<Link> l1s = getMultiLinks(h1, tor1);
+                    ArrayList<Link> l2s = getMultiLinks(tor1, h2);
                     for (Link l1 : l1s) {
                         for (Link l2 : l2s) {
                             ArrayList<Link> pathLinks = new ArrayList<>();
@@ -109,10 +109,10 @@ public class ComputePaths {
                     for (SpineSwitch spine : spines1) {
                         if (spines2.contains(spine)) {
                             //add path: h1->tor1->spine->tor2->h2
-                            ArrayList<Link> l1s = findLinks(h1, tor1);
-                            ArrayList<Link> l2s = findLinks(tor1, spine);
-                            ArrayList<Link> l3s = findLinks(spine, tor2);
-                            ArrayList<Link> l4s = findLinks(tor2, h2);
+                            ArrayList<Link> l1s = getMultiLinks(h1, tor1);
+                            ArrayList<Link> l2s = getMultiLinks(tor1, spine);
+                            ArrayList<Link> l3s = getMultiLinks(spine, tor2);
+                            ArrayList<Link> l4s = getMultiLinks(tor2, h2);
                             for (Link l1 : l1s) {
                                 for (Link l2 : l2s) {
                                     for (Link l3 : l3s) {
@@ -145,9 +145,9 @@ public class ComputePaths {
      * @param n2: destination node
      * @return
      */
-    private ArrayList<Link> findLinks(Node n1, Node n2) {
+    private ArrayList<Link> getMultiLinks(Node n1, Node n2) {
         ArrayList<Link> multiLinks = new ArrayList<>();
-        for (Link link : links) {
+        for (Link link : this.links) {
             if (link.getSrcNode().equals(n1) &&
                 link.getDestNode().equals(n2)) {
                 multiLinks.add(link);
@@ -248,6 +248,7 @@ public class ComputePaths {
         tors.add(tor1);
         tors.add(tor2);
         spines.add(spine1);
+        spines.add(spine2);
         links.add(l1);
         links.add(l1r);
         links.add(l2);
@@ -288,35 +289,37 @@ public class ComputePaths {
         Path path;
         Flow flow;
 
+        ECMPPlacement ecmp = new ECMPPlacement(spines, tors, hosts, links);
+
         paths = pathsComputer.getPaths(a, b);
         flow = new Flow(a, b, 0, 10, 0.5);
         System.out.println("\nflow a -> b");
         path = RandomPlacement.randomPlacement(flow, paths);
-        System.out.println("randomPlacement: " + path);
-        path = ECMPPlacement.ecmpPlacement(flow, paths);
+        //System.out.println("randomPlacement: " + path);
+        path = ecmp.recommendPath(flow);
         System.out.println("ecmpPlacement:   " + path);
         path = EconomicPlacement.econPlacement(flow, paths);
-        System.out.println("econPlacment:    " + path);
+        //System.out.println("econPlacment:    " + path);
 
         paths = pathsComputer.getPaths(a, c);
         flow = new Flow(a, c, 0, 10, 0.5);
         System.out.println("\nflow a -> c");
         path = RandomPlacement.randomPlacement(flow, paths);
-        System.out.println("randomPlacement: " + path);
-        path = ECMPPlacement.ecmpPlacement(flow, paths);
+        //System.out.println("randomPlacement: " + path);
+        path = ecmp.recommendPath(flow);
         System.out.println("ecmpPlacement:   " + path);
         path = EconomicPlacement.econPlacement(flow, paths);
-        System.out.println("econPlacment:    " + path);
+        //System.out.println("econPlacment:    " + path);
 
         paths = pathsComputer.getPaths(b, a);
         flow = new Flow(b, a, 0, 10, 0.5);
         System.out.println("\nflow b -> a");
         path = RandomPlacement.randomPlacement(flow, paths);
-        System.out.println("randomPlacement: " + path);
-        path = ECMPPlacement.ecmpPlacement(flow, paths);
+        //System.out.println("randomPlacement: " + path);
+        path = ecmp.recommendPath(flow);
         System.out.println("ecmpPlacement:   " + path);
         path = EconomicPlacement.econPlacement(flow, paths);
-        System.out.println("econPlacment:    " + path);
+        //System.out.println("econPlacment:    " + path);
 
 
     }

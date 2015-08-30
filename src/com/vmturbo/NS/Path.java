@@ -39,7 +39,7 @@ public class Path {
     @Override
     public String toString() {
         String s = "path: " + source.getName();
-        if (links == null) {
+        if (links == null || links.isEmpty()) {
             s += " -> " + dest.getName();
         }
         else {
