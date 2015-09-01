@@ -171,7 +171,7 @@ public class TopologySetup {
         StringTokenizer str = new StringTokenizer(neighborsLine, delims);
         while(str.hasMoreElements()){
             linkStr = str.nextToken().trim();
-            // here we pass String of format : " neighbor1, link capacity " to function
+            // here we pass String of format : " neighbor1, neoghbor type, link capacity " to function
             // this is for each neighbor
             String delim = ",";
             StringTokenizer tk = new StringTokenizer(linkStr, delim);
@@ -181,12 +181,14 @@ public class TopologySetup {
             Double capacity =  Double.parseDouble(nextcapacity);
             // then we create link between switchname and nextNeighbor
             ToRSwitch nextTor = null;
+            nextTor = new ToRSwitch(nextNeighbor);
             if ((nextTor = torSearch(nextNeighbor)) == null){
-                nextTor = new ToRSwitch(nextNeighbor);
                 torList.add(nextTor);
+            }
+            if ((nextTor = torSearch(nextNeighbor)) == null){
                 spswitch.addtorSwitch(nextTor);
             }
-            // if there are more than one connections between a given spine and tor
+            // case when there are more than one connections between a given spine and tor
             Link newlink = null;
             newlink = new Link(spswitch, nextTor, capacity, 0.0, Link.LinkType.TORTOSPINE);
             linkList.add(newlink);
