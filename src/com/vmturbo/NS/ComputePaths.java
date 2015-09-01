@@ -165,12 +165,6 @@ public class ComputePaths {
         return matrix.get(source).get(dest);
     }
 
-    //need implementation
-    @Override
-    public String toString() {
-
-        return "";
-    }
 
     ///**for testing 
     public static void main(String[] args) {
@@ -295,31 +289,31 @@ public class ComputePaths {
         flow = new Flow(a, b, 0, 10, 0.5);
         System.out.println("\nflow a -> b");
         path = RandomPlacement.randomPlacement(flow, paths);
-        //System.out.println("randomPlacement: " + path);
+        System.out.println("randomPlacement: " + path);
         path = ecmp.recommendPath(flow);
         System.out.println("ecmpPlacement:   " + path);
         path = EconomicPlacement.econPlacement(flow, paths);
-        //System.out.println("econPlacment:    " + path);
+        System.out.println("econPlacment:    " + path);
 
         paths = pathsComputer.getPaths(a, c);
         flow = new Flow(a, c, 0, 10, 0.5);
         System.out.println("\nflow a -> c");
         path = RandomPlacement.randomPlacement(flow, paths);
-        //System.out.println("randomPlacement: " + path);
+        System.out.println("randomPlacement: " + path);
         path = ecmp.recommendPath(flow);
         System.out.println("ecmpPlacement:   " + path);
         path = EconomicPlacement.econPlacement(flow, paths);
-        //System.out.println("econPlacment:    " + path);
+        System.out.println("econPlacment:    " + path);
 
         paths = pathsComputer.getPaths(b, a);
         flow = new Flow(b, a, 0, 10, 0.5);
         System.out.println("\nflow b -> a");
         path = RandomPlacement.randomPlacement(flow, paths);
-        //System.out.println("randomPlacement: " + path);
+        System.out.println("randomPlacement: " + path);
         path = ecmp.recommendPath(flow);
         System.out.println("ecmpPlacement:   " + path);
         path = EconomicPlacement.econPlacement(flow, paths);
-        //System.out.println("econPlacment:    " + path);
+        System.out.println("econPlacment:    " + path);
 
 
     }

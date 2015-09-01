@@ -7,10 +7,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Random;
+import java.util.Set;
 
 
 public class ECMPPlacement {
-
 
     private Flow flow;
     private Host source;
@@ -35,6 +35,7 @@ public class ECMPPlacement {
         this.links = links;
 
         this.matrix = new HashMap<>();
+        fillMatrix();
 
     }
 
@@ -47,19 +48,19 @@ public class ECMPPlacement {
         this.dest = flow.getDest();
 
         if (source.equals(dest)) {
+            System.out.println("ECMP.recommendPath: flow has same source and destination. " + flow);
             return null;
         }
 
-        fillMatrix();
-        //System.out.println(matrix);
 
         //===========compute a path hop by hop=================
 
         //initialize
         ArrayList<Link> pathLinks = new ArrayList<>();
+        Path path = new Path(this.source, this.dest, pathLinks);
         Node current = flow.getSource();
 
-        //choose a best next-hop
+        //choose a best next-hop        
         while (!current.equals(this.dest)) {
             ArrayList<Node> nextSwitches = new ArrayList<>();
             ArrayList<Link> bestLinks = null;
@@ -93,13 +94,13 @@ public class ECMPPlacement {
             //choose randomly among the best next-hops
             Link linkSelected = getRandomLink(bestLinks);
             if (linkSelected == null) {
+                System.out.println("ECMP.recommendPath: can't find next-hop after " + path);
                 return null;
             }
             pathLinks.add(linkSelected);
             current = linkSelected.getDestNode();
         }
 
-        Path path = new Path(this.source, this.dest, pathLinks);
         return path;
     }
 
@@ -111,7 +112,8 @@ public class ECMPPlacement {
      */
     private ArrayList<Link> getBestLinks(Node current, Collection<Node> nextSwitches) {
         ArrayList<Link> bestLinks = new ArrayList<>();
-        if (nextSwitches == null) {
+        if (nextSwitches == null || nextSwitches.isEmpty()) {
+            System.out.println("ECMP.getBestLinks: no switch is connected to " + current);
             return bestLinks;
         }
 
@@ -125,6 +127,9 @@ public class ECMPPlacement {
         }
         //if destination host is unreachable from "current" node, return empty ArrayList
         if (minDistance == Integer.MAX_VALUE) {
+            System.out.println("ECMP.getBestLinks: no switches connected to " + current
+                               + " leads to "
+                               + this.dest);
             return bestLinks;
         }
         //else, find all links leading to switches with minDistance
@@ -163,9 +168,11 @@ public class ECMPPlacement {
     public static Link getRandomLink(ArrayList<Link> myLinks) {
 
         if (myLinks == null || myLinks.isEmpty()) {
+            //System.out.println("ECMP.getRandomLIn: ArrayList passed is null or empty");
             return null;
         }
         if (myLinks.contains(null)) {
+            System.out.println("ECMP.getRandomLink: ArrayList passed contains null link");
             return null;
         }
         Random rand = new Random();
@@ -212,6 +219,29 @@ public class ECMPPlacement {
                 row.put(host, distance);
             }
             matrix.put(sw, row);
+        }
+    }
+
+    public void print() {
+        //print hosts
+        Set sources = matrix.keySet();
+        if (sources.iterator().hasNext()) {
+            System.out.println("  " + matrix.get(sources.iterator().next()).keySet());
+        }
+
+        for (Node source : matrix.keySet()) {
+            String s = source.getName() + ": ";
+            for (Node dest : matrix.get(source).keySet()) {
+                int distance = matrix.get(source).get(dest);
+                if (distance < Integer.MAX_VALUE) {
+                    s += distance + "  ";
+                }
+                else {
+                    s += "-" + "  ";
+                }
+
+            }
+            System.out.println(s);
         }
     }
 

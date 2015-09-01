@@ -96,47 +96,17 @@ public class BFS {
         for (Node source : matrix.keySet()) {
             String s = source.getName() + ": ";
             for (Node dest : matrix.get(source).keySet()) {
-                s += matrix.get(source).get(dest) + "  ";
+                int distance = matrix.get(source).get(dest);
+                if (distance < Integer.MAX_VALUE) {
+                    s += distance + "  ";
+                }
+                else {
+                    s += "-" + "  ";
+                }
+
             }
             System.out.println(s);
         }
-    }
-
-
-    public static void main(String[] args) {
-
-
-        ToRSwitch tor1 = new ToRSwitch("1");
-        ToRSwitch tor2 = new ToRSwitch("2");
-        ToRSwitch tor3 = new ToRSwitch("3");
-
-        SpineSwitch spineA = new SpineSwitch("A");
-        SpineSwitch spineB = new SpineSwitch("B");
-
-        spineA.addtorSwitch(tor1);
-        spineA.addtorSwitch(tor2);
-        spineB.addtorSwitch(tor1);
-        spineB.addtorSwitch(tor3);
-        tor1.addSpine(spineA);
-        tor1.addSpine(spineB);
-        tor2.addSpine(spineA);
-        tor3.addSpine(spineB);
-
-        ArrayList<ToRSwitch> tors = new ArrayList<>();
-        ArrayList<SpineSwitch> spines = new ArrayList<>();
-        tors.add(tor1);
-        tors.add(tor2);
-        tors.add(tor3);
-        spines.add(spineA);
-        spines.add(spineB);
-
-        ArrayList<Node> allNodes = new ArrayList<>();
-        allNodes.addAll(tors);
-        allNodes.addAll(spines);
-
-        BFS bfs = new BFS(allNodes);
-        bfs.run();
-        bfs.print();
     }
 
 }
