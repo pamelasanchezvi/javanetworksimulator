@@ -24,6 +24,7 @@ public class SpineSwitch extends Node {
 
     public void addtorSwitch(ToRSwitch torSwitch){
         if(torSwitch == null){
+            System.out.println("torSwitch is null");
             return;
         }
         if(torList.contains(torSwitch)){

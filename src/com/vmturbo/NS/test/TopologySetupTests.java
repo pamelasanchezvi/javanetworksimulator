@@ -27,7 +27,7 @@ public class TopologySetupTests {
      */
     @Before
     public void setUp() throws Exception {
-        filename = "input/topo1";
+        filename = "input/yy-topology";
     }
 
     /**
@@ -68,6 +68,12 @@ public class TopologySetupTests {
         for (SpineSwitch spine:spinelist ){
             System.out.println("spine.getName()" + spine.getName());
             ArrayList<ToRSwitch> torlistfromspine = spine.getToRList();
+            if(torlistfromspine == null){
+                System.out.println("torlist in spine is null");
+            }
+            if(torlistfromspine.size() < 1 ){
+                System.out.println("torlist in spine is empty");
+            }
             for (ToRSwitch tor: torlistfromspine){
                 System.out.println("   tor list" + tor.getName());
             }

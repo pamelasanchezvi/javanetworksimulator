@@ -181,13 +181,14 @@ public class TopologySetup {
             Double capacity =  Double.parseDouble(nextcapacity);
             // then we create link between switchname and nextNeighbor
             ToRSwitch nextTor = null;
-            nextTor = new ToRSwitch(nextNeighbor);
             if ((nextTor = torSearch(nextNeighbor)) == null){
+                nextTor = new ToRSwitch(nextNeighbor);
                 torList.add(nextTor);
-            }
-            if ((nextTor = torSearch(nextNeighbor)) == null){
+                spswitch.addtorSwitch(nextTor);
+            }else{
                 spswitch.addtorSwitch(nextTor);
             }
+
             // case when there are more than one connections between a given spine and tor
             Link newlink = null;
             newlink = new Link(spswitch, nextTor, capacity, 0.0, Link.LinkType.TORTOSPINE);

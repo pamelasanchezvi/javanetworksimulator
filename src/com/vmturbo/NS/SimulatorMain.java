@@ -23,8 +23,8 @@ public class SimulatorMain {
 	private double maxLinkUtilToRtoSpine;
 	private double stdevLinkUtilToRtoSpine;
 
-	private static String TOPOFILE = "input/symmetric-topology";
-	private static String QUEUEFILE = "input/flow-sameTime";
+	private static String TOPOFILE = "input/yy-topology";
+	private static String QUEUEFILE = "input/yy-flowqueue";
 
 	/**
 	 * Calculate average, max and std dev of link utilization
@@ -58,12 +58,12 @@ public class SimulatorMain {
 				break;
 			}
 		}
-		
+
 		avgLinkUtilHosttoToR = sumUtilHostTor/linkList.size();
 		avgLinkUtilToRtoSpine = sumUtilTorSpine/linkList.size();
 		maxLinkUtilHosttoToR = maxHostTor;
 		maxLinkUtilToRtoSpine = maxTorSpine;
-		
+
 		// calculate variance
 		for(Link link: linkList){
 			switch(link.getLinkType()){
@@ -77,7 +77,7 @@ public class SimulatorMain {
 				break;
 			}
 		}
-		
+
 		// calculate std dev
 		stdevLinkUtilHosttoToR = Math.sqrt(tempStdevHostTor/linkList.size());
 		stdevLinkUtilToRtoSpine = Math.sqrt(tempStdevTorSpine/linkList.size());
@@ -111,10 +111,10 @@ public class SimulatorMain {
 		for(Link link : linkList){
 			System.out.println("Link: " + link.getSrcNode().getName() + " -> " + link.getDestNode().getName() + " ,util: " + link.getUtilization());
 		}
-		System.out.println("Avg H to ToR: " + getAvgLinkUtilHostTor() 
+		System.out.println("Avg H to ToR: " + getAvgLinkUtilHostTor()
 				+ "\tMax H to ToR: " + getMaxLinkUtilHostTor()
 				+ "\tStdev H to ToR: " + getStdevLinkUtilHostTor());
-		System.out.println("Avg ToR to Spine: " + getAvgLinkUtilTorSpine() 
+		System.out.println("Avg ToR to Spine: " + getAvgLinkUtilTorSpine()
 				+ "\tMax ToR to Spine: " + getMaxLinkUtilTorSpine()
 				+ "\tStdev ToR to Spine: " + getStdevLinkUtilTorSpine());
 	}
@@ -161,7 +161,7 @@ public class SimulatorMain {
 						+ flow.getStart() + "\t Bandwidth: "
 						+ flow.getBandwidth());
 				simulator.calculateLinkUtil(topo.linkList);
-				simulator.printMetrics(topo.linkList);   
+				simulator.printMetrics(topo.linkList);
 				break;
 			case START:
 				allPaths = comPaths.getPaths(flow.getSource(), flow.getDest());
@@ -174,24 +174,27 @@ public class SimulatorMain {
 							+ flow.getBandwidth());
 				}
 
-				Path pathSelected = RandomPlacement.randomPlacement(flow, allPaths);
+				//Path pathSelected = RandomPlacement.randomPlacement(flow, allPaths);
 				//Path pathSelected = EconomicPlacement.econPlacement(flow, allPaths);
+				ECMPPlacement ecmp = new ECMPPlacement(topo.spineList, topo.torList, topo.hostList, topo.linkList);
+				Path pathSelected = ecmp.recommendPath(flow);
+				System.out.println("path select" + pathSelected);
 				pathSelected.placeFlow(flow);
-				
-				
+
+
 				simulator.calculateLinkUtil(topo.linkList);
 				System.err.println("Link Utilization after placing Flow: "
 						+ flow.getSource().getName()
 						+ " -> "
 						+ flow.getDest().getName()
-						+ " Flow bandwidth: " 
+						+ " Flow bandwidth: "
 						+ flow.getBandwidth());
-				simulator.printMetrics(topo.linkList);   
+				simulator.printMetrics(topo.linkList);
 				break;
 			default:
 				break;
-			}			  
-			 
+			}
+
 		}
 	}
 
