@@ -1,13 +1,12 @@
+/**
+ * @author shangshangchen
+ */
 package com.vmturbo.NS;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
-/**
- * @author shangshangchen
- * this class is to make topology construction easier, i.e. fewer codes,
- * but you can always use individual constructors for each node and link.
- */
+
 public class Utility {
 
     /**
@@ -28,37 +27,51 @@ public class Utility {
     }
 
 
-    public static int connectNodes(Node n1, Node n2) {
+    public static int connectNodes(Node n1, Node n2, String[] capacities, ArrayList<Link> links) {
+        boolean connect = false;
         if ((n1 instanceof Host) && (n2 instanceof ToRSwitch)) {
             Host host = (Host)n1;
             ToRSwitch tor = (ToRSwitch)n2;
             host.addtorSwitch(tor);
             tor.addHost(host);
-            return 0;
+            connect = true;
         }
         if ((n2 instanceof Host) && (n1 instanceof ToRSwitch)) {
             Host host = (Host)n2;
             ToRSwitch tor = (ToRSwitch)n1;
             host.addtorSwitch(tor);
             tor.addHost(host);
-            return 0;
+            connect = true;
         }
         if ((n1 instanceof ToRSwitch) && (n2 instanceof SpineSwitch)) {
             ToRSwitch tor = (ToRSwitch)n1;
             SpineSwitch spine = (SpineSwitch)n2;
             tor.addSpine(spine);
             spine.addtorSwitch(tor);
-            return 0;
+            connect = true;
+
         }
         if ((n2 instanceof ToRSwitch) && (n1 instanceof SpineSwitch)) {
             ToRSwitch tor = (ToRSwitch)n2;
             SpineSwitch spine = (SpineSwitch)n1;
             tor.addSpine(spine);
             spine.addtorSwitch(tor);
+            connect = true;
+
+        }
+        if (connect) {
+            for (int i = 0; i < capacities.length; i++) {
+                String s1 = "0/" + capacities[i].split("\\|")[0];
+                String s2 = "0/" + capacities[i].split("\\|")[1];
+                addDuplexLink(n1, n2, s1, s2, links);
+            }
             return 0;
         }
-        System.out.println("Utility.connectNodes: can't connect " + n1 + " and " + n2);
-        return -1;
+        else {
+            System.out.println("Utility.connectNodes: can't connect " + n1 + " and " + n2);
+            return -1;
+        }
+
     }
 
     public static Link[] addDuplexLink(Node n1, Node n2, String s1, String s2,
@@ -68,6 +81,7 @@ public class Utility {
             System.out.println("Utility.addDuplexLink: null pointer passed");
             return null;
         }
+        int num = Utility.getMultiLinks(n1, n2, links).size();
         int utilization, capacity;
 
         utilization = Integer.parseInt(s1.split("/")[0]);
@@ -82,14 +96,13 @@ public class Utility {
         duplex[1] = rlink;
         links.add(rlink);
 
-        int num = 0;
         if (num == 0) {
             link.setName(n1.getName() + "-" + n2.getName());
             rlink.setName(n2.getName() + "-" + n1.getName());
         }
         else {
-            link.setName(n1.getName() + "-" + n2.getName() + "." + num);
-            rlink.setName(n2.getName() + "-" + n1.getName() + "." + num);
+            link.setName(n1.getName() + "-" + n2.getName() + "(" + num + ")");
+            rlink.setName(n2.getName() + "-" + n1.getName() + "(" + num + ")");
         }
 
         return duplex;
