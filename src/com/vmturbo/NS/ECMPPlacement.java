@@ -5,9 +5,10 @@ package com.vmturbo.NS;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.TreeMap;
 
 
 public class ECMPPlacement {
@@ -23,7 +24,7 @@ public class ECMPPlacement {
 
     //"matrix" stores shortest distance from every switch to every host
     //it will be used to choose the best next-hops
-    private HashMap<Node, HashMap<Host, Integer>> matrix;
+    private Map<Node, Map<Host, Integer>> matrix;
 
     //constructor: stores topology info
     public ECMPPlacement(ArrayList<SpineSwitch> spines, ArrayList<ToRSwitch> tors,
@@ -34,7 +35,7 @@ public class ECMPPlacement {
         this.hosts = hosts;
         this.links = links;
 
-        this.matrix = new HashMap<>();
+        this.matrix = new TreeMap<>();
         fillMatrix();
 
     }
@@ -179,20 +180,23 @@ public class ECMPPlacement {
 
         //use BFS results to populate our matrix
         for (Node sw : switches) {
-            HashMap<Host, Integer> row = new HashMap<>();
-            for (Host host : this.hosts) {
-                //find (shortest) distance between sw and host
+            Map<Host, Integer> row = new TreeMap<>();
+            for (Host host : this.hosts) { //find (shortest) distance between sw and host                
                 int distance;
                 ArrayList<ToRSwitch> destToRs = host.getToRSwitch();
-                //if sw is a ToR connected to host, then distance must be 1 (can't be shorter than that)
-                if (destToRs.contains(sw)) {
-                    distance = 1;
+
+
+                if (destToRs.contains(sw)) { //if sw is a ToR connected to host, 
+                    distance = 1;            //then distance must be 1 (can't be shorter than that)
                 }
-                else { // i.e. sw is not directly connected to host
+                else { //i.e. sw is not directly connected to host
                        //find the closest ToR among all ToRs the host is connected to
                        //distance(sw, host) = distance(sw, closest ToR) + 1
                     distance = Integer.MAX_VALUE;
                     for (Node destToR : destToRs) {
+                        if (bfs.getDistance(sw, destToR) == Integer.MAX_VALUE) {
+                            continue;
+                        }
                         int newDistance = bfs.getDistance(sw, destToR) + 1;
                         if (newDistance < distance) {
                             distance = newDistance;
