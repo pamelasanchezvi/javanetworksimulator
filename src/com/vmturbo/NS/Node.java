@@ -7,10 +7,10 @@ import java.util.ArrayList;
 
 /**
  * @author kunal
- * @author shangshangchen: added toString() and link-related methods
+ * @author shangshangchen: added toString(), compareTo(), and link-related methods
  *
  */
-public abstract class Node {
+public abstract class Node implements Comparable<Node> {
 
     protected String name;
     //should really be a Set, but since we are doing everything in ArrayList...
@@ -23,6 +23,11 @@ public abstract class Node {
     @Override
     public String toString() {
         return name;
+    }
+
+    @Override
+    public int compareTo(Node other) {
+        return this.getName().compareTo(other.getName());
     }
 
     public void setName(String nodeName) {
