@@ -85,7 +85,13 @@ public class Link {
 
     @Override
     public String toString() {
-        return this.name;
+        if (this.name.trim().equals("")) {
+            return srcNode + " -> " + destNode;
+        }
+        else {
+            return this.name;
+        }
+
     }
 
     public boolean exists(String src, String dest) {
@@ -94,5 +100,6 @@ public class Link {
         }
         return false;
     }
+
 
 }
