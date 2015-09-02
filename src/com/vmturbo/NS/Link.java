@@ -28,6 +28,15 @@ public class Link {
         this.type = type;
     }
 
+    //another constructor
+    public Link(Node srcNode, Node destNode, double capacity, LinkType type) {
+        this.srcNode = srcNode;
+        this.destNode = destNode;
+        this.capacity = capacity;
+        this.utilization = 0;
+        this.type = type;
+    }
+
     public Node getSrcNode() {
         return srcNode;
     }
