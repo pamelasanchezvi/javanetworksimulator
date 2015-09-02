@@ -6,6 +6,7 @@ package com.vmturbo.NS.test;
 import java.util.ArrayList;
 
 import com.vmturbo.NS.ECMPPlacement;
+import com.vmturbo.NS.Flow;
 import com.vmturbo.NS.Host;
 import com.vmturbo.NS.Link;
 import com.vmturbo.NS.SpineSwitch;
@@ -49,19 +50,18 @@ public class ECMPTest {
 
         //connect nodes
         Utility.connectNodes(a, tor1, new String[] {"1|1"}, links);
-        Utility.connectNodes(a, tor2, new String[] {"1|1"}, links);
         Utility.connectNodes(b, tor2, new String[] {"1|1"}, links);
         Utility.connectNodes(c, tor3, new String[] {"1|1"}, links);
 
         Utility.connectNodes(spineA, tor1, new String[] {"10|10"}, links);
         Utility.connectNodes(spineA, tor2, new String[] {"10|10"}, links);
-        //Utility.connectNodes(spineA, tor3, new String[] {"10|10"}, links);
+        Utility.connectNodes(spineA, tor3, new String[] {"10|10"}, links);
 
-        //Utility.connectNodes(spineB, tor1, new String[] {"10|10"}, links);
-        //Utility.connectNodes(spineB, tor2, new String[] {"10|10"}, links);
-        //Utility.connectNodes(spineB, tor3, new String[] {"10|10"}, links);
+        Utility.connectNodes(spineB, tor1, new String[] {"10|10"}, links);
+        Utility.connectNodes(spineB, tor2, new String[] {"10|10"}, links);
+        Utility.connectNodes(spineB, tor3, new String[] {"10|10"}, links);
 
-        //Utility.connectNodes(spineC, tor1, new String[] {"10|10"}, links);
+        Utility.connectNodes(spineC, tor1, new String[] {"10|10"}, links);
         Utility.connectNodes(spineC, tor2, new String[] {"10|10"}, links);
         Utility.connectNodes(spineC, tor3, new String[] {"10|10"}, links);
 
@@ -69,9 +69,14 @@ public class ECMPTest {
 
         //run ECMP
         ECMPPlacement ecmp = new ECMPPlacement(spines, tors, hosts, links);
-        ecmp.print();
-        //Flow flow = new Flow(a, b, 0, 10, 0.5);
-        //System.out.println(ecmp.recommendPath(flow));
+        //ecmp.print();
+        Flow flow = new Flow(a, b, 0, 10, 0.5);
+        for (int i = 0; i < 10; i++) {
+            System.out.println(ecmp.recommendPath(flow));
+        }
+
+
+
         //System.out.println(links);
 
     }

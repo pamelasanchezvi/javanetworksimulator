@@ -5,6 +5,7 @@ package com.vmturbo.NS;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
@@ -25,6 +26,7 @@ public class ECMPPlacement {
     //"matrix" stores shortest distance from every switch to every host
     //it will be used to choose the best next-hops
     private Map<Node, Map<Host, Integer>> matrix;
+    private Map<Node, Integer> next; //used for roundRobin scheduling
 
     //constructor: stores topology info
     public ECMPPlacement(ArrayList<SpineSwitch> spines, ArrayList<ToRSwitch> tors,
@@ -37,6 +39,9 @@ public class ECMPPlacement {
 
         this.matrix = new TreeMap<>();
         fillMatrix();
+
+        this.next = new HashMap<>();
+        fillNext();
 
     }
 
@@ -92,8 +97,8 @@ public class ECMPPlacement {
 
             }
 
-            //choose randomly among the best next-hops
-            Link linkSelected = getRandomLink(bestLinks);
+            Link linkSelected = roundRobin(current, bestLinks);
+            //Link linkSelected = getRandomLink(bestLinks);
             if (linkSelected == null) {
                 System.out.println("ECMP.recommendPath: can't find next-hop after " + path);
                 return null;
@@ -128,7 +133,7 @@ public class ECMPPlacement {
         }
         //if destination host is unreachable from "current" node, return empty ArrayList
         if (minDistance == Integer.MAX_VALUE) {
-            System.out.println("ECMP.getBestLinks: no switches connected to " + current
+            System.out.println("ECMP.getBestLinks: no switch connected to " + current
                                + " leads to "
                                + this.dest);
             return bestLinks;
@@ -152,7 +157,7 @@ public class ECMPPlacement {
     public static Link getRandomLink(ArrayList<Link> myLinks) {
 
         if (myLinks == null || myLinks.isEmpty()) {
-            //System.out.println("ECMP.getRandomLIn: ArrayList passed is null or empty");
+            System.out.println("ECMP.getRandomLink: ArrayList passed is null or empty");
             return null;
         }
         if (myLinks.contains(null)) {
@@ -162,6 +167,25 @@ public class ECMPPlacement {
         Random rand = new Random();
         int n = rand.nextInt(myLinks.size());
         return myLinks.get(n);
+    }
+
+    private Link roundRobin(Node node, ArrayList<Link> myLinks) {
+        if (myLinks == null || myLinks.isEmpty()) {
+            System.out.println("ECMP.roundRobin: ArrayList passed is null or empty");
+            return null;
+        }
+        if (myLinks.contains(null)) {
+            System.out.println("ECMP.roundRobin: ArrayList passed contains null link");
+            return null;
+        }
+
+        int n = next.get(node);
+        if (n >= myLinks.size()) {
+            n = n % myLinks.size();
+        }
+        next.put(node, n + 1);
+        return myLinks.get(n);
+
     }
 
     /**
@@ -229,6 +253,18 @@ public class ECMPPlacement {
 
             }
             System.out.println(s);
+        }
+    }
+
+    private void fillNext() {
+        for (Node spine : this.spines) {
+            next.put(spine, 0);
+        }
+        for (Node host : this.hosts) {
+            next.put(host, 0);
+        }
+        for (Node tor : this.tors) {
+            next.put(tor, 0);
         }
     }
 
