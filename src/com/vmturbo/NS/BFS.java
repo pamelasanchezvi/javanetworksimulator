@@ -6,7 +6,9 @@ package com.vmturbo.NS;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Queue;
+import java.util.TreeMap;
 
 
 public class BFS {
@@ -16,10 +18,10 @@ public class BFS {
     private final int BLACK = 2;
 
     private ArrayList<Node> nodes;
-    private HashMap<Node, HashMap<Node, Integer>> matrix;
-    private HashMap<Node, Integer> color;
-    private HashMap<Node, Integer> distance;
-    private HashMap<Node, Node> predecessor;
+    private Map<Node, Map<Node, Integer>> matrix;
+    private Map<Node, Integer> color;
+    private Map<Node, Integer> distance;
+    private Map<Node, Node> predecessor;
 
 
     /**
@@ -31,13 +33,13 @@ public class BFS {
         color = new HashMap<>();
         distance = new HashMap<>();
         predecessor = new HashMap<>();
-        matrix = new HashMap<>();
+        matrix = new TreeMap<>();
     }
 
     public void run() {
         for (Node source : nodes) {
             runBFS(source);
-            HashMap<Node, Integer> row = new HashMap<>();
+            Map<Node, Integer> row = new TreeMap<>();
             for (Node dest : nodes) {
                 row.put(dest, distance.get(dest));
             }
