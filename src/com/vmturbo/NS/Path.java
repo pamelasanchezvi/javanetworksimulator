@@ -40,7 +40,7 @@ public class Path {
     public String toString() {
         String s = "path: " + source.getName();
         if (links == null || links.isEmpty()) {
-            s += " -> " + dest.getName();
+            s += " -> ";
         }
         else {
             for (Link link : links) {
