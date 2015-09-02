@@ -77,7 +77,7 @@ public class ECMPPlacement {
                 //if current tor is directly connected to destination host,
                 //then the best next-hop IS the destination
                 if (((ToRSwitch)current).getHostList().contains(dest)) {
-                    bestLinks = getMultiLinks(current, dest);
+                    bestLinks = Utility.getMultiLinks(current, dest, this.links);
                 }
                 else { //otherwise, go through spines
                     nextSwitches.addAll(((ToRSwitch)current).getSpineList());
@@ -136,27 +136,10 @@ public class ECMPPlacement {
         for (Node sw : nextSwitches) {
             int distance = matrix.get(sw).get(dest);
             if (distance == minDistance) {
-                bestLinks.addAll(getMultiLinks(current, sw));
+                bestLinks.addAll(Utility.getMultiLinks(current, sw, this.links));
             }
         }
         return bestLinks;
-    }
-
-    /**
-     * this is the same function as in ComputePaths
-     * @param n1: source node
-     * @param n2: destination node
-     * @return an ArrayList of all parallel links from n1 to n2, empty ArrayList if no such link exists
-     */
-    private ArrayList<Link> getMultiLinks(Node n1, Node n2) {
-        ArrayList<Link> multiLinks = new ArrayList<>();
-        for (Link link : this.links) {
-            if (link.getSrcNode().equals(n1) &&
-                link.getDestNode().equals(n2)) {
-                multiLinks.add(link);
-            }
-        }
-        return multiLinks;
     }
 
 
@@ -224,7 +207,7 @@ public class ECMPPlacement {
 
     public void print() {
         //print hosts
-        Set sources = matrix.keySet();
+        Set<Node> sources = matrix.keySet();
         if (sources.iterator().hasNext()) {
             System.out.println("  " + matrix.get(sources.iterator().next()).keySet());
         }
@@ -245,5 +228,9 @@ public class ECMPPlacement {
         }
     }
 
+    //for testing
+    public static void main(String[] args) {
+
+    }
 
 }

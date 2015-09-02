@@ -86,9 +86,9 @@ public class ComputePaths {
         for (ToRSwitch tor1 : tors1) {
             for (ToRSwitch tor2 : tors2) {
                 if (tor1.equals(tor2)) {
-                    //add path: h1->tor1->h2 to the cell (h1,h2)                    
-                    ArrayList<Link> l1s = getMultiLinks(h1, tor1);
-                    ArrayList<Link> l2s = getMultiLinks(tor1, h2);
+                    //add path: h1->tor1->h2 to the cell (h1,h2)  
+                    ArrayList<Link> l1s = Utility.getMultiLinks(h1, tor1, this.links);
+                    ArrayList<Link> l2s = Utility.getMultiLinks(tor1, h2, this.links);
                     for (Link l1 : l1s) {
                         for (Link l2 : l2s) {
                             ArrayList<Link> pathLinks = new ArrayList<>();
@@ -109,10 +109,10 @@ public class ComputePaths {
                     for (SpineSwitch spine : spines1) {
                         if (spines2.contains(spine)) {
                             //add path: h1->tor1->spine->tor2->h2
-                            ArrayList<Link> l1s = getMultiLinks(h1, tor1);
-                            ArrayList<Link> l2s = getMultiLinks(tor1, spine);
-                            ArrayList<Link> l3s = getMultiLinks(spine, tor2);
-                            ArrayList<Link> l4s = getMultiLinks(tor2, h2);
+                            ArrayList<Link> l1s = Utility.getMultiLinks(h1, tor1, this.links);
+                            ArrayList<Link> l2s = Utility.getMultiLinks(tor1, spine, this.links);
+                            ArrayList<Link> l3s = Utility.getMultiLinks(spine, tor2, this.links);
+                            ArrayList<Link> l4s = Utility.getMultiLinks(tor2, h2, this.links);
                             for (Link l1 : l1s) {
                                 for (Link l2 : l2s) {
                                     for (Link l3 : l3s) {
@@ -133,27 +133,6 @@ public class ComputePaths {
                 }
             }
         }
-    }
-
-
-
-    /**
-     * Helper function: 
-     * find links from node1 to node2 by looping through all links
-     * (there might be multiple/parallel links between the same source and destination)
-     * @param n1: source node
-     * @param n2: destination node
-     * @return
-     */
-    private ArrayList<Link> getMultiLinks(Node n1, Node n2) {
-        ArrayList<Link> multiLinks = new ArrayList<>();
-        for (Link link : this.links) {
-            if (link.getSrcNode().equals(n1) &&
-                link.getDestNode().equals(n2)) {
-                multiLinks.add(link);
-            }
-        }
-        return multiLinks;
     }
 
     /**
