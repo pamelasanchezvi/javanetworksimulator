@@ -23,8 +23,8 @@ public class Link implements Comparable<Link> {
     public Link(Node srcNode, Node destNode, double capacity, double utilization, LinkType type) {
         this.srcNode = srcNode;
         this.destNode = destNode;
-        this.capacity = capacity;
-        this.utilization = utilization;
+        this.setCapacity(capacity);
+        this.setUtilization(utilization);
         this.type = type;
     }
 
@@ -32,7 +32,7 @@ public class Link implements Comparable<Link> {
     public Link(Node srcNode, Node destNode, double capacity, LinkType type) {
         this.srcNode = srcNode;
         this.destNode = destNode;
-        this.capacity = capacity;
+        this.setCapacity(capacity);
         this.utilization = 0;
         this.type = type;
     }
@@ -76,6 +76,7 @@ public class Link implements Comparable<Link> {
         if (capac < 0) {
             return;
         }
+        capac = (double)Math.round(capac * 100) / 100; //round it to two decimals
         this.capacity = capac;
     }
 
@@ -83,6 +84,7 @@ public class Link implements Comparable<Link> {
         if (util < 0) {
             return;
         }
+        util = (double)Math.round(util * 100) / 100; //round it to two decimals
         this.utilization = util;
     }
 
