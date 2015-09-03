@@ -120,4 +120,31 @@ public class Utility {
         return duplex;
 
     }
+
+    //for Pamela
+    public static void printPrePaths(ArrayList<ArrayList<Link>> prePathsList) {
+        for (ArrayList<Link> prePath : prePathsList) {
+            System.out.println("prePath: ");
+            for (Link link : prePath) {
+                System.out.println("    " + link);
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        Node n1 = new Host("n1");
+        Node n2 = new Host("n2");
+        Link l1 = new Link(n1, n2, 0, 0, null);
+        Link l2 = new Link(n2, n1, 0, 0, null);
+        ArrayList<Link> pp1 = new ArrayList<>();
+        pp1.add(l1);
+        pp1.add(l2);
+        ArrayList<Link> pp2 = new ArrayList<>();
+        pp2.add(l2);
+        pp2.add(l1);
+        ArrayList<ArrayList<Link>> prePathsList = new ArrayList<>();
+        prePathsList.add(pp1);
+        prePathsList.add(pp2);
+        printPrePaths(prePathsList);
+    }
 }

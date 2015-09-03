@@ -70,9 +70,9 @@ public class ECMPTest {
 
         //run ECMP
         ECMPPlacement ecmp = new ECMPPlacement(spines, tors, hosts, links);
-        //ecmp.printDistances();
-        Flow flow = new Flow(a, c, 0, 10, 1);
+        //ecmp.printDistances();        
         for (int i = 0; i < 12; i++) {
+            Flow flow = new Flow(a, c, 0, 10, 1);
             Path path = ecmp.recommendPath(flow);
             path.placeFlow(flow);
         }
