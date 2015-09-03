@@ -5,6 +5,7 @@ package com.vmturbo.NS;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 
 
 public class Utility {
@@ -26,6 +27,17 @@ public class Utility {
         return multiLinks;
     }
 
+    public static void printLinkUsage(ArrayList<Link> links) {
+        ArrayList<Link> localCopy = new ArrayList<>();
+        localCopy.addAll(links);
+        Collections.sort(localCopy);
+        for (Link link : localCopy) {
+            if (link.getUtilization() != 0) {
+                System.out.println(link.toString() + ": " + link.getUtilization());
+            }
+        }
+
+    }
 
     public static int connectNodes(Node n1, Node n2, String[] capacities, ArrayList<Link> links) {
         boolean connect = false;

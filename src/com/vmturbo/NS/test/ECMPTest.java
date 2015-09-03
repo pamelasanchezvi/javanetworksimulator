@@ -4,7 +4,6 @@
 package com.vmturbo.NS.test;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 import com.vmturbo.NS.ECMPPlacement;
 import com.vmturbo.NS.Flow;
@@ -78,12 +77,7 @@ public class ECMPTest {
             path.placeFlow(flow);
         }
 
-        Collections.sort(links);
-        for (Link link : links) {
-            if (link.getUtilization() != 0) {
-                System.out.println(link.toString() + ": " + link.getUtilization());
-            }
-        }
+        Utility.printLinkUsage(links);
 
 
     }
