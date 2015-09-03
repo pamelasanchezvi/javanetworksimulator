@@ -28,11 +28,12 @@ public class Utility {
     }
 
     public static void printLinkUsage(ArrayList<Link> links) {
+        double threshold = 0.001;
         ArrayList<Link> localCopy = new ArrayList<>();
         localCopy.addAll(links);
         Collections.sort(localCopy);
         for (Link link : localCopy) {
-            if (link.getUtilization() != 0) {
+            if (link.getUtilization() < threshold) {
                 System.out.println(link.toString() + ": " + link.getUtilization());
             }
         }
@@ -132,6 +133,8 @@ public class Utility {
     }
 
     public static void main(String[] args) {
+
+        //testing printPrePaths()
         Node n1 = new Host("n1");
         Node n2 = new Host("n2");
         Link l1 = new Link(n1, n2, 0, 0, null);
