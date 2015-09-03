@@ -4,11 +4,13 @@
 package com.vmturbo.NS.test;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import com.vmturbo.NS.ECMPPlacement;
 import com.vmturbo.NS.Flow;
 import com.vmturbo.NS.Host;
 import com.vmturbo.NS.Link;
+import com.vmturbo.NS.Path;
 import com.vmturbo.NS.SpineSwitch;
 import com.vmturbo.NS.ToRSwitch;
 import com.vmturbo.NS.Utility;
@@ -53,31 +55,36 @@ public class ECMPTest {
         Utility.connectNodes(b, tor2, new String[] {"1|1"}, links);
         Utility.connectNodes(c, tor3, new String[] {"1|1"}, links);
 
-        Utility.connectNodes(spineA, tor1, new String[] {"10|10"}, links);
+        Utility.connectNodes(spineA, tor1, new String[] {"10|10", "10|10"}, links);
         Utility.connectNodes(spineA, tor2, new String[] {"10|10"}, links);
         Utility.connectNodes(spineA, tor3, new String[] {"10|10"}, links);
 
         Utility.connectNodes(spineB, tor1, new String[] {"10|10"}, links);
-        Utility.connectNodes(spineB, tor2, new String[] {"10|10"}, links);
+        Utility.connectNodes(spineB, tor2, new String[] {"10|10", "10|10"}, links);
         Utility.connectNodes(spineB, tor3, new String[] {"10|10"}, links);
 
         Utility.connectNodes(spineC, tor1, new String[] {"10|10"}, links);
         Utility.connectNodes(spineC, tor2, new String[] {"10|10"}, links);
-        Utility.connectNodes(spineC, tor3, new String[] {"10|10"}, links);
+        Utility.connectNodes(spineC, tor3, new String[] {"10|10", "10|10"}, links);
 
 
 
         //run ECMP
         ECMPPlacement ecmp = new ECMPPlacement(spines, tors, hosts, links);
-        //ecmp.print();
-        Flow flow = new Flow(a, b, 0, 10, 0.5);
-        for (int i = 0; i < 10; i++) {
-            System.out.println(ecmp.recommendPath(flow));
+        //ecmp.printDistances();
+        Flow flow = new Flow(a, c, 0, 10, 1);
+        for (int i = 0; i < 12; i++) {
+            Path path = ecmp.recommendPath(flow);
+            path.placeFlow(flow);
         }
 
+        Collections.sort(links);
+        for (Link link : links) {
+            if (link.getUtilization() != 0) {
+                System.out.println(link.toString() + ": " + link.getUtilization());
+            }
+        }
 
-
-        //System.out.println(links);
 
     }
 

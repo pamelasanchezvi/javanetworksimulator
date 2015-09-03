@@ -5,7 +5,6 @@ package com.vmturbo.NS;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
@@ -23,10 +22,10 @@ public class ECMPPlacement {
     private ArrayList<Host> hosts;
     private ArrayList<Link> links;
 
-    //"matrix" stores shortest distance from every switch to every host
-    //it will be used to choose the best next-hops
-    private Map<Node, Map<Host, Integer>> matrix;
-    private Map<Node, Integer> next; //used for roundRobin scheduling
+    //"distances" stores shortest distance from every switch to every host
+    //it  will be used to choose the best next-hops
+    private Map<Node, Map<Host, Integer>> distances;
+    private Map<Node, Map<Host, ArrayList<Link>>> bests;
 
     //constructor: stores topology info
     public ECMPPlacement(ArrayList<SpineSwitch> spines, ArrayList<ToRSwitch> tors,
@@ -37,11 +36,11 @@ public class ECMPPlacement {
         this.hosts = hosts;
         this.links = links;
 
-        this.matrix = new TreeMap<>();
-        fillMatrix();
+        this.distances = new TreeMap<>();
+        this.bests = new TreeMap<>();
+        fillDistiances();
+        populateBests();
 
-        this.next = new HashMap<>();
-        fillNext();
 
     }
 
@@ -68,37 +67,42 @@ public class ECMPPlacement {
 
         //choose a best next-hop        
         while (!current.equals(this.dest)) {
-            ArrayList<Node> nextSwitches = new ArrayList<>();
-            ArrayList<Link> bestLinks = null;
+            ArrayList<Link> bestLinks = bests.get(current).get(this.dest);
 
-            if (current instanceof Host) {
-                //i.e. current == source, because host can't be intermediary nodes
-                //next-hops are the ToR switches it's connected to
-                nextSwitches.addAll(((Host)current).getToRSwitch());
-                //get the best next-hops
-                bestLinks = getBestLinks(current, nextSwitches);
-            }
-            else if (current instanceof ToRSwitch) {
-                //two cases here:
-                //if current tor is directly connected to destination host,
-                //then the best next-hop IS the destination
-                if (((ToRSwitch)current).getHostList().contains(dest)) {
-                    bestLinks = Utility.getMultiLinks(current, dest, this.links);
-                }
-                else { //otherwise, go through spines
-                    nextSwitches.addAll(((ToRSwitch)current).getSpineList());
+            if (bestLinks == null) { //"null" means that the entry hasn't been cached.
+                ArrayList<Node> nextSwitches = new ArrayList<>();
+                if (current instanceof Host) {
+                    //i.e. current == source, because host can't be intermediary nodes
+                    //next-hops are the ToR switches it's connected to
+                    nextSwitches.addAll(((Host)current).getToRSwitch());
+                    //get the best next-hops
                     bestLinks = getBestLinks(current, nextSwitches);
                 }
-
+                else if (current instanceof ToRSwitch) {
+                    //two cases here:
+                    //if current tor is directly connected to destination host,
+                    //then the best next-hop IS the destination
+                    if (((ToRSwitch)current).getHostList().contains(dest)) {
+                        bestLinks = Utility.getMultiLinks(current, dest, this.links);
+                    }
+                    else { //otherwise, go through spines
+                        nextSwitches.addAll(((ToRSwitch)current).getSpineList());
+                        bestLinks = getBestLinks(current, nextSwitches);
+                    }
+                }
+                else if (current instanceof SpineSwitch) {
+                    nextSwitches.addAll(((SpineSwitch)current).getToRList());
+                    bestLinks = getBestLinks(current, nextSwitches);
+                }
+                //bestLinks may be empty, but can't be null, due to the methods used to get them:
+                //i.e this.getBestLinks(); Utility.getMultiLinks()
+                //now we can cache it in "bests"
+                bests.get(current).put(this.dest, bestLinks);
             }
-            else if (current instanceof SpineSwitch) {
-                nextSwitches.addAll(((SpineSwitch)current).getToRList());
-                bestLinks = getBestLinks(current, nextSwitches);
 
-            }
 
-            Link linkSelected = roundRobin(current, bestLinks);
             //Link linkSelected = getRandomLink(bestLinks);
+            Link linkSelected = roundRobin(bestLinks);
             if (linkSelected == null) {
                 System.out.println("ECMP.recommendPath: can't find next-hop after " + path);
                 return null;
@@ -126,7 +130,7 @@ public class ECMPPlacement {
         //find minDistance from nextSwitches to destination host
         int minDistance = Integer.MAX_VALUE;
         for (Node sw : nextSwitches) {
-            int distance = matrix.get(sw).get(dest);
+            int distance = distances.get(sw).get(dest);
             if (distance < minDistance) {
                 minDistance = distance;
             }
@@ -140,7 +144,7 @@ public class ECMPPlacement {
         }
         //else, find all links leading to switches with minDistance
         for (Node sw : nextSwitches) {
-            int distance = matrix.get(sw).get(dest);
+            int distance = distances.get(sw).get(dest);
             if (distance == minDistance) {
                 bestLinks.addAll(Utility.getMultiLinks(current, sw, this.links));
             }
@@ -169,7 +173,7 @@ public class ECMPPlacement {
         return myLinks.get(n);
     }
 
-    private Link roundRobin(Node node, ArrayList<Link> myLinks) {
+    private Link roundRobin(ArrayList<Link> myLinks) {
         if (myLinks == null || myLinks.isEmpty()) {
             System.out.println("ECMP.roundRobin: ArrayList passed is null or empty");
             return null;
@@ -179,12 +183,11 @@ public class ECMPPlacement {
             return null;
         }
 
-        int n = next.get(node);
-        if (n >= myLinks.size()) {
-            n = n % myLinks.size();
-        }
-        next.put(node, n + 1);
-        return myLinks.get(n);
+        //get and remove the next link in the list
+        Link next = myLinks.remove(0);
+        //append it to the end of the list
+        myLinks.add(next);
+        return next;
 
     }
 
@@ -193,7 +196,7 @@ public class ECMPPlacement {
      * we need distance between switches and hosts,
      * but we can use BFS to compute this.
      */
-    private void fillMatrix() {
+    private void fillDistiances() {
 
         //run BFS
         ArrayList<Node> switches = new ArrayList<>();
@@ -205,6 +208,7 @@ public class ECMPPlacement {
         //use BFS results to populate our matrix
         for (Node sw : switches) {
             Map<Host, Integer> row = new TreeMap<>();
+
             for (Host host : this.hosts) { //find (shortest) distance between sw and host                
                 int distance;
                 ArrayList<ToRSwitch> destToRs = host.getToRSwitch();
@@ -229,21 +233,36 @@ public class ECMPPlacement {
                 }
                 row.put(host, distance);
             }
-            matrix.put(sw, row);
+            distances.put(sw, row);
         }
     }
 
-    public void print() {
-        //print hosts
-        Set<Node> sources = matrix.keySet();
-        if (sources.iterator().hasNext()) {
-            System.out.println("  " + matrix.get(sources.iterator().next()).keySet());
+    private void populateBests() {
+        ArrayList<Node> allNodes = new ArrayList<>();
+        allNodes.addAll(this.hosts);
+        allNodes.addAll(this.spines);
+        allNodes.addAll(this.tors);
+        for (Node node : allNodes) {
+            Map<Host, ArrayList<Link>> row = new TreeMap<>();
+            for (Host host : this.hosts) {
+                row.put(host, null);
+            }
+            bests.put(node, row);
         }
 
-        for (Node source : matrix.keySet()) {
+    }
+
+    public void printDistances() {
+        //print hosts
+        Set<Node> sources = distances.keySet();
+        if (sources.iterator().hasNext()) {
+            System.out.println("  " + distances.get(sources.iterator().next()).keySet());
+        }
+
+        for (Node source : distances.keySet()) {
             String s = source.getName() + ": ";
-            for (Node dest : matrix.get(source).keySet()) {
-                int distance = matrix.get(source).get(dest);
+            for (Node dest : distances.get(source).keySet()) {
+                int distance = distances.get(source).get(dest);
                 if (distance < Integer.MAX_VALUE) {
                     s += distance + "  ";
                 }
@@ -256,16 +275,8 @@ public class ECMPPlacement {
         }
     }
 
-    private void fillNext() {
-        for (Node spine : this.spines) {
-            next.put(spine, 0);
-        }
-        for (Node host : this.hosts) {
-            next.put(host, 0);
-        }
-        for (Node tor : this.tors) {
-            next.put(tor, 0);
-        }
+    public ArrayList<Link> getBests(Node node, Host host) {
+        return bests.get(node).get(host);
     }
 
     //for testing
