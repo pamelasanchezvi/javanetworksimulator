@@ -76,16 +76,14 @@ public class Link implements Comparable<Link> {
         if (capac < 0) {
             return;
         }
-        capac = (double)Math.round(capac * 100) / 100; //round it to two decimals
-        this.capacity = capac;
+        this.capacity = Utility.formatDouble(capac, 2);
     }
 
     public void setUtilization(double util) {
         if (util < 0) {
             return;
         }
-        util = (double)Math.round(util * 100) / 100; //round it to two decimals
-        this.utilization = util;
+        this.utilization = Utility.formatDouble(util, 2);
     }
 
     //optional name of the link,

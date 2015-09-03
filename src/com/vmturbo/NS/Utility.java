@@ -10,6 +10,12 @@ import java.util.Collections;
 
 public class Utility {
 
+
+    public static double formatDouble(double d, int decimalPlaces) {
+        double n = Math.pow(10, decimalPlaces);
+        return Math.round(d * n) / n;
+    }
+
     /**
      * 
      * @param n1: source node
@@ -27,8 +33,7 @@ public class Utility {
         return multiLinks;
     }
 
-    public static void printLinkUsage(ArrayList<Link> links) {
-        double threshold = 0.001;
+    public static void printLinkUsage(ArrayList<Link> links, double threshold) {
         ArrayList<Link> localCopy = new ArrayList<>();
         localCopy.addAll(links);
         Collections.sort(localCopy);
@@ -133,6 +138,8 @@ public class Utility {
     }
 
     public static void main(String[] args) {
+        //testing formatDouble
+        System.out.println(formatDouble(3.4995, 3));
 
         //testing printPrePaths()
         Node n1 = new Host("n1");
@@ -149,5 +156,6 @@ public class Utility {
         prePathsList.add(pp1);
         prePathsList.add(pp2);
         printPrePaths(prePathsList);
+
     }
 }
