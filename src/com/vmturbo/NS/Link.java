@@ -7,7 +7,7 @@ package com.vmturbo.NS;
  * @author kunal
  *
  */
-public class Link {
+public class Link implements Comparable<Link> {
 
     private Node srcNode;
     private Node destNode;
@@ -101,6 +101,11 @@ public class Link {
             return this.name;
         }
 
+    }
+
+    @Override
+    public int compareTo(Link other) {
+        return this.toString().compareTo(other.toString());
     }
 
     public boolean exists(String src, String dest) {
