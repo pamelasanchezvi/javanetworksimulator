@@ -33,7 +33,7 @@ public class Utility {
         localCopy.addAll(links);
         Collections.sort(localCopy);
         for (Link link : localCopy) {
-            if (link.getUtilization() < threshold) {
+            if (link.getUtilization() > threshold) {
                 System.out.println(link.toString() + ": " + link.getUtilization());
             }
         }
