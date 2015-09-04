@@ -41,7 +41,7 @@ public class TopologyCmpPaths {
         torList = new ArrayList<ToRSwitch>();
         hostList = new ArrayList<Host>();
         linkList = new ArrayList<Link>();
-        pathsList = new ArrayList<ArrayList<Link>>();
+        pathsList = new ArrayList<Path>();
         prepathsList = new ArrayList<ArrayList<Link>>();
     }
     public void setTopologyFileName(String fileToOpen){
