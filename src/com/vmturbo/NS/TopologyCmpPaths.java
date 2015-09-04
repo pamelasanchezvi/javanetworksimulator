@@ -14,7 +14,7 @@ import java.util.StringTokenizer;
  */
 public class TopologyCmpPaths {
     // extended for path creation
-    ArrayList<ArrayList<Link>> pathsList;
+    ArrayList<Path> pathsList;
     ArrayList<ArrayList<Link>> prepathsList;
 
     // lists for the entire network
@@ -42,6 +42,7 @@ public class TopologyCmpPaths {
         hostList = new ArrayList<Host>();
         linkList = new ArrayList<Link>();
         pathsList = new ArrayList<ArrayList<Link>>();
+        prepathsList = new ArrayList<ArrayList<Link>>();
     }
     public void setTopologyFileName(String fileToOpen){
         this.fileName = fileToOpen;
@@ -200,10 +201,24 @@ public class TopologyCmpPaths {
             linkList.add(newlinkTo);
             // loop through all current partial paths and look at endpoints
             ArrayList<Link> newpath  = null;
-            for (ArrayList<Link> path: pathsList){
+            for (ArrayList<Link> path: prepathsList){
                 Link firstlink = path.get(0);
                 Link lastlink = path.get(path.size() -1);
                 if(path.size() == 1){
+                    curSrc = firstlink.getSrcNode();
+                    srcName = curSrc.getName();
+                    curDest = firstlink.getDestNode();
+                    if (nextNeighbor.equals(srcName)){
+                     // ADDING TO BEGINNING
+                     // current path and new link have common node , src of current path is common node
+                     // initialize newpath
+                        newpath = new ArrayList<Link>();
+                     // copy links to new path
+                        copyPath(path, newpath);
+                    }
+                }
+                //Now looking at paths with length greater than 1
+                if(path.size() > 1){
                     curSrc = firstlink.getSrcNode();
                     srcName = curSrc.getName();
                     curDest = firstlink.getDestNode();
@@ -215,8 +230,6 @@ public class TopologyCmpPaths {
                         copyPath(path, newpath);
                     }
                 }
-                //TODO finish looking at paths with length greater than 1
-
 
             }
             newlinkFrom = new Link(nextTor, spswitch, capacity, 0.0, Link.LinkType.TORTOSPINE);
@@ -300,10 +313,12 @@ public class TopologyCmpPaths {
     }
 
     /**
+     * method copies a path as a list of link and creates a path object
      * @returns a path object if the resulting path indeed has host endpoints
      *
      */
-    private Path copyPath(ArrayList<Link> pathOrig,ArrayList<Link> pathCpy){
+    private boolean copyPath(ArrayList<Link> pathOrig,ArrayList<Link> pathCpy){
+        boolean newpathCreated = false;
         for (Link lnk:pathOrig){
             pathCpy.add(lnk);
         }
@@ -311,9 +326,13 @@ public class TopologyCmpPaths {
         Node destNode = pathCpy.get(pathCpy.size()-1).getSrcNode();
         if(srcNode instanceof Host && destNode instanceof Host){
             Path newPath = new Path((Host)srcNode, (Host)destNode, pathCpy);
-            return newPath;
+            pathsList.add(newPath);
+            newpathCreated = true;
+        }else{
+            prepathsList.add(pathCpy);
+            newpathCreated = false;
         }
-        return null;
+        return newpathCreated;
     }
 
     /**
