@@ -170,7 +170,7 @@ public class TopologyCmpPaths {
     private void parseSpineNeighbors(String linkp, SpineSwitch spswitch) {
 
         String delims = "|";
-        StringTokenizer str = new StringTokenizer(neighborsLine, delims);
+        StringTokenizer str = new StringTokenizer(linkp, delims);
         while(str.hasMoreElements()){
             linkStr = str.nextToken().trim();
             // here we pass String of format : " neighbor1, neoghbor type, link capacity " to function
@@ -197,14 +197,24 @@ public class TopologyCmpPaths {
             Node curSrc = null;
             Node curDest = null;
             String srcName = null;
+            String destName = null;
+            String spineName = null;
+            String torName = null;
             newlinkTo = new Link(spswitch, nextTor, capacity, 0.0, Link.LinkType.TORTOSPINE);
             linkList.add(newlinkTo);
-            // loop through all current partial paths and look at endpoints
+            //TODO  check link doesn't already exist and add as prepath
+
+            /*
+             * loop through all current partial paths and look at endpoints
+             */
+            /*
+             * looking to add " spine to ToR " link at the beginning and end of the path
+             */
             ArrayList<Link> newpath  = null;
             for (ArrayList<Link> path: prepathsList){
                 Link firstlink = path.get(0);
                 Link lastlink = path.get(path.size() -1);
-                if(path.size() == 1){
+                if(path.size() >= 1){
                     curSrc = firstlink.getSrcNode();
                     srcName = curSrc.getName();
                     curDest = firstlink.getDestNode();
@@ -216,13 +226,11 @@ public class TopologyCmpPaths {
                      // copy links to new path
                         copyPath(path, newpath);
                     }
-                }
-                //Now looking at paths with length greater than 1
-                if(path.size() > 1){
-                    curSrc = firstlink.getSrcNode();
-                    srcName = curSrc.getName();
-                    curDest = firstlink.getDestNode();
-                    if (nextNeighbor.equals(srcName)){
+                    curDest = lastlink.getDestNode();
+                    destName = curDest.getName();
+                    spineName = spswitch.getName();
+                    if (spineName.equals(destName)){
+                     // ADDING TO END
                      // current path and new link have common node , src of current path is common node
                      // initialize newpath
                         newpath = new ArrayList<Link>();
@@ -230,10 +238,40 @@ public class TopologyCmpPaths {
                         copyPath(path, newpath);
                     }
                 }
-
             }
             newlinkFrom = new Link(nextTor, spswitch, capacity, 0.0, Link.LinkType.TORTOSPINE);
             linkList.add(newlinkFrom);
+            /*
+             * looking to add "ToR to spine" link at the beginning and end of the path
+             */
+            for (ArrayList<Link> path: prepathsList){
+                Link firstlink = path.get(0);
+                Link lastlink = path.get(path.size() -1);
+                if(path.size() >= 1){
+                    curSrc = firstlink.getSrcNode();
+                    srcName = curSrc.getName();
+                    spineName = spswitch.getName();
+                    if (spineName.equals(srcName)){
+                     // ADDING TO BEGINNING
+                     // current path and new link have common node , src of current path is common node
+                     // initialize newpath
+                        newpath = new ArrayList<Link>();
+                     // copy links to new path
+                        copyPath(path, newpath);
+                    }
+                    curDest = lastlink.getDestNode();
+                    destName = curDest.getName();
+                    torName = nextNeighbor;
+                    if (torName.equals(destName)){
+                     // ADDING TO END
+                     // current path and new link have common node , src of current path is common node
+                     // initialize newpath
+                        newpath = new ArrayList<Link>();
+                     // copy links to new path
+                        copyPath(path, newpath);
+                    }
+                }
+            }
 
         }
 
