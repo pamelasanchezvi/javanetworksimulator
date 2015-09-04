@@ -34,8 +34,7 @@ public class Utility {
     }
 
     public static void printLinkUsage(ArrayList<Link> links, double threshold) {
-        ArrayList<Link> localCopy = new ArrayList<>();
-        localCopy.addAll(links);
+        ArrayList<Link> localCopy = new ArrayList<>(links);
         Collections.sort(localCopy);
         for (Link link : localCopy) {
             if (link.getUtilization() > threshold) {
