@@ -106,12 +106,14 @@ public class Utility {
         Link link = new Link(n1, n2, capacity, utilization, null);
         duplex[0] = link;
         links.add(link);
+        n1.addOutgoingLink(link);
 
         utilization = Integer.parseInt(s2.split("/")[0]);
         capacity = Integer.parseInt(s2.split("/")[1]);
         Link rlink = new Link(n2, n1, capacity, utilization, null);
         duplex[1] = rlink;
         links.add(rlink);
+        n2.addOutgoingLink(rlink);
 
         if (num == 0) {
             link.setName(n1.getName() + "-" + n2.getName());

@@ -13,7 +13,7 @@ public class DFS {
     private Graph graph;
     private Node start;
     private Node end;
-    private ArrayList<ArrayList<Node>> psudoPaths;
+    private ArrayList<ArrayList<Node>> superPaths;
 
     public DFS(Graph graph) {
         this.graph = graph;
@@ -22,13 +22,13 @@ public class DFS {
     public ArrayList<ArrayList<Node>> run(Node start, Node end) {
         this.start = start;
         this.end = end;
-        psudoPaths = new ArrayList<>();
+        superPaths = new ArrayList<>();
 
         LinkedList<Node> visited = new LinkedList<>();
         visited.add(this.start);
         runDFS(visited);
 
-        return psudoPaths;
+        return superPaths;
 
     }
 
@@ -42,7 +42,7 @@ public class DFS {
             if (node.equals(end)) {
                 visited.add(node);
                 //printPath(visited);
-                psudoPaths.add(new ArrayList<Node>(visited));
+                superPaths.add(new ArrayList<Node>(visited));
                 visited.removeLast();
                 break;
             }
@@ -115,7 +115,7 @@ public class DFS {
         graph.addTwoWayEdge(spineC, tor3);
 
 
-        System.out.println(new DFS(graph).run(tor1, tor3));
+        new DFS(graph).run(tor1, tor3);
     }
 
 }
