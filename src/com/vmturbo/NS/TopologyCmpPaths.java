@@ -198,16 +198,28 @@ public class TopologyCmpPaths {
             nextcapacity = tk.hasMoreTokens() ? tk.nextToken().trim() : null;
             Double capacity =  Double.parseDouble(nextcapacity);
             // then we create object if we can't find the nextNeighbor in the list of ToRs
+
             ToRSwitch nextTor = null;
             if ((nextTor = torSearch(nextNeighbor)) == null){
                 nextTor = new ToRSwitch(nextNeighbor);
                 torList.add(nextTor);
                 spswitch.addtorSwitch(nextTor);
+                if(isExistingSpine){
+                    // TODO extend prepath along spine
+                }else{
+                    // nothing
+                }
+                //we know this will be a brand new link, TODO * new to the linklist and * new to the prepaths
             }else{
                 spswitch.addtorSwitch(nextTor);
                 //TODO  check link doesn't already exist and add to list of links, check if there are paths including this link already
                 // capacity??
-                linkSearchExtended(spswitch, nextTor, "0.0",newlinkTo);
+                if (isExistingSpine){  // and we already know  tor exists
+                    linkSearchExtended(spswitch, nextTor, "0.0",newlinkTo);
+                }else{
+                    // TODO extend prepath along ToR
+                }
+
             }
         }
     }
@@ -311,10 +323,12 @@ public class TopologyCmpPaths {
      */
     public Boolean linkSearchExtended(Node from , Node to, String capacity, Link potentialLink){
         boolean linkExists =  false;
-        //TODO  check link doesn't already exist and add to list of links, check if there are paths including this link already
+        //check link doesn't already exist and add to list of links, check if there are paths including this link already
         if ((potentialLink = linkSearch(from.getName(), to.getName())) == null){
             potentialLink = new Link(from, to, 0.0, Link.LinkType.TORTOSPINE);
              linkList.add(potentialLink);
+            // TODO add link to prepaths
+             // TODO if any nodes in common with any existing prepath , add link to extend existing prepaths
         }else{
             linkExists = true;
         }
