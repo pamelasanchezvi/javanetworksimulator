@@ -5,6 +5,7 @@ package com.vmturbo.NS;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
@@ -26,6 +27,9 @@ public class ECMPPlacement {
     //it  will be used to choose the best next-hops
     private Map<Node, Map<Host, Integer>> distances;
     private Map<Node, Map<Host, ArrayList<Link>>> bests;
+    //used for roundRobin to keep track of least recently used link
+    private Map<Link, Integer> timeStamp;
+    private int t = 0;
 
     //constructor: stores topology info
     public ECMPPlacement(ArrayList<SpineSwitch> spines, ArrayList<ToRSwitch> tors,
@@ -38,8 +42,10 @@ public class ECMPPlacement {
 
         this.distances = new TreeMap<>();
         this.bests = new TreeMap<>();
+        this.timeStamp = new HashMap<>();
         fillDistiances();
         populateBests();
+        initializeTimeStamp();
 
 
     }
@@ -183,10 +189,17 @@ public class ECMPPlacement {
             return null;
         }
 
-        //get and remove the next link in the list
-        Link next = myLinks.remove(0);
-        //append it to the end of the list
-        myLinks.add(next);
+        Link next = myLinks.get(0);
+        int earliest = Integer.MAX_VALUE;
+        for (Link link : myLinks) {
+            if (timeStamp.get(link) < earliest) {
+                earliest = timeStamp.get(link);
+                next = link;
+            }
+        }
+
+        timeStamp.put(next, t);
+        t++;
         return next;
 
     }
@@ -250,6 +263,12 @@ public class ECMPPlacement {
             bests.put(node, row);
         }
 
+    }
+
+    private void initializeTimeStamp() {
+        for (Link link : this.links) {
+            timeStamp.put(link, -1);
+        }
     }
 
     public void printDistances() {
