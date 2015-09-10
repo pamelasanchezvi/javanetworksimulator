@@ -128,14 +128,6 @@ public class TopologyCmpPaths {
         return null;
     }
 
-    private Link prePathSearch(ArrayList<Link> prepath){
-        for (Link nxt: prepath){
-            if (nxt.exists(src, dest)){
-                return nxt;
-            }
-        }
-        return null;
-    }
 
     /**
      *  initializes switch objects as needed:
@@ -212,12 +204,14 @@ public class TopologyCmpPaths {
                 //we know this will be a brand new link, TODO * new to the linklist and * new to the prepaths
             }else{
                 spswitch.addtorSwitch(nextTor);
-                //TODO  check link doesn't already exist and add to list of links, check if there are paths including this link already
                 // capacity??
-                if (isExistingSpine){  // and we already know  tor exists
-                    linkSearchExtended(spswitch, nextTor, "0.0",newlinkTo);
+                if (isExistingSpine){
+                    //so far we know that spine and tor exist
+                    //in function: check link already exist and add to list of links, check if there are paths including this link already
+                    linkSearchExtended(spswitch, nextTor, "0.0",newlinkTo, newlinkFrom);
                 }else{
                     // TODO extend prepath along ToR
+                    //we know this will be a brand new link, TODO * new to the linklist and * new to the prepaths
                 }
 
             }
@@ -319,21 +313,12 @@ public class TopologyCmpPaths {
     }
 
     /**
+     * this function is called once we verify from and to exist
+     * it checks if there is an existing link between from and to
      * @return linkExists
      */
-    public Boolean linkSearchExtended(Node from , Node to, String capacity, Link potentialLink){
+    public Boolean linkSearchExtended(Node from , Node to, String capacity, Link potentialLinkSpineToR,  Link potentialLinkToRSpine){
         boolean linkExists =  false;
-        //check link doesn't already exist and add to list of links, check if there are paths including this link already
-        if ((potentialLink = linkSearch(from.getName(), to.getName())) == null){
-            potentialLink = new Link(from, to, 0.0, Link.LinkType.TORTOSPINE);
-             linkList.add(potentialLink);
-            // TODO add link to prepaths
-             // TODO if any nodes in common with any existing prepath , add link to extend existing prepaths
-        }else{
-            linkExists = true;
-        }
-        // TODO change below !
-        // then we create link between switchname and nextNeighbor
         // in this case we expect there are more than one connections between a given spine and tor
         Node curSrc = null;
         Node curDest = null;
@@ -341,77 +326,88 @@ public class TopologyCmpPaths {
         String destName = null;
         String spineName = null;
         String torName = null;
-        newlinkTo = new Link(spswitch, nextTor, capacity, 0.0, Link.LinkType.TORTOSPINE);
-        linkList.add(newlinkTo);
+        //check link doesn't already exist and add to list of links, check if there are paths including this link already
+        if ((potentialLinkSpineToR = linkSearch(from.getName(), to.getName())) == null){
+            potentialLinkSpineToR = new Link(from, to, 0.0, Link.LinkType.TORTOSPINE);
+             linkList.add(potentialLinkSpineToR);
+            // TODO add link to prepaths
+             // TODO if any nodes in common with any existing prepath , add link to extend existing prepaths
+             /*
+              * loop through all current partial paths and look at endpoints
+              */
+             /*
+              * looking to add " spine to ToR " link at the beginning and end of the path
+              */
+             ArrayList<Link> newpath  = null;
+             for (ArrayList<Link> path: prepathsList){
+                 Link firstlink = path.get(0);
+                 Link lastlink = path.get(path.size() -1);
+                 if(path.size() >= 1){
+                     curSrc = firstlink.getSrcNode();
+                     srcName = curSrc.getName();
+                     curDest = firstlink.getDestNode();
+                     if (to.getName().equals(srcName)){
+                      // ADDING TO BEGINNING
+                      // current path and new link have common node , src of current path is common node
+                      // initialize newpath
+                         newpath = new ArrayList<Link>();
+                      // copy links to new path
+                         copyPath(path, newpath);
+                     }
+                     curDest = lastlink.getDestNode();
+                     destName = curDest.getName();
+                     spineName = from.getName();
+                     if (spineName.equals(destName)){
+                      // ADDING TO END
+                      // current path and new link have common node , src of current path is common node
+                      // initialize newpath
+                         newpath = new ArrayList<Link>();
+                      // copy links to new path
+                         copyPath(path, newpath);
+                     }
+                 }
+             }
+        }else{
+            linkExists = true;
+        }
+
         //TODO  check link doesn't already exist and add as prepath
 
-        /*
-         * loop through all current partial paths and look at endpoints
-         */
-        /*
-         * looking to add " spine to ToR " link at the beginning and end of the path
-         */
-        ArrayList<Link> newpath  = null;
-        for (ArrayList<Link> path: prepathsList){
-            Link firstlink = path.get(0);
-            Link lastlink = path.get(path.size() -1);
-            if(path.size() >= 1){
-                curSrc = firstlink.getSrcNode();
-                srcName = curSrc.getName();
-                curDest = firstlink.getDestNode();
-                if (nextNeighbor.equals(srcName)){
-                 // ADDING TO BEGINNING
-                 // current path and new link have common node , src of current path is common node
-                 // initialize newpath
-                    newpath = new ArrayList<Link>();
-                 // copy links to new path
-                    copyPath(path, newpath);
-                }
-                curDest = lastlink.getDestNode();
-                destName = curDest.getName();
-                spineName = spswitch.getName();
-                if (spineName.equals(destName)){
-                 // ADDING TO END
-                 // current path and new link have common node , src of current path is common node
-                 // initialize newpath
-                    newpath = new ArrayList<Link>();
-                 // copy links to new path
-                    copyPath(path, newpath);
-                }
-            }
-        }
-        newlinkFrom = new Link(nextTor, spswitch, capacity, 0.0, Link.LinkType.TORTOSPINE);
-        linkList.add(newlinkFrom);
-        /*
-         * looking to add "ToR to spine" link at the beginning and end of the path
-         */
-        for (ArrayList<Link> path: prepathsList){
-            Link firstlink = path.get(0);
-            Link lastlink = path.get(path.size() -1);
-            if(path.size() >= 1){
-                curSrc = firstlink.getSrcNode();
-                srcName = curSrc.getName();
-                spineName = spswitch.getName();
-                if (spineName.equals(srcName)){
-                 // ADDING TO BEGINNING
-                 // current path and new link have common node , src of current path is common node
-                 // initialize newpath
-                    newpath = new ArrayList<Link>();
-                 // copy links to new path
-                    copyPath(path, newpath);
-                }
-                curDest = lastlink.getDestNode();
-                destName = curDest.getName();
-                torName = nextNeighbor;
-                if (torName.equals(destName)){
-                 // ADDING TO END
-                 // current path and new link have common node , src of current path is common node
-                 // initialize newpath
-                    newpath = new ArrayList<Link>();
-                 // copy links to new path
-                    copyPath(path, newpath);
-                }
-            }
+        if ((potentialLinkToRSpine = linkSearch(from.getName(), to.getName())) == null){
+            potentialLinkToRSpine = new Link(from, to, 0.0, Link.LinkType.TORTOSPINE);
+             linkList.add(potentialLinkToRSpine);
+             /*
+              * looking to add "ToR to spine" link at the beginning and end of the path
+              */
+             ArrayList<Link> newpath  = null;
+             for (ArrayList<Link> path: prepathsList){
+                 Link firstlink = path.get(0);
+                 Link lastlink = path.get(path.size() -1);
+                 if(path.size() >= 1){
+                     curSrc = firstlink.getSrcNode();
+                     srcName = curSrc.getName();
+                     spineName = to.getName();  //spine
+                     if (spineName.equals(srcName)){
+                      // ADDING TO BEGINNING
+                      // current path and new link have common node , src of current path is common node
+                      // initialize newpath
+                         newpath = new ArrayList<Link>();
+                      // copy links to new path
+                         copyPath(path, newpath);
+                     }
+                     curDest = lastlink.getDestNode();
+                     destName = curDest.getName();
+                     torName = nextNeighbor;
+                     if (torName.equals(destName)){
+                      // ADDING TO END
+                      // current path and new link have common node , src of current path is common node
+                      // initialize newpath
+                         newpath = new ArrayList<Link>();
+                      // copy links to new path
+                         copyPath(path, newpath);
+                     }
+                 }
+             }
         }
         return  linkExists;
     }
