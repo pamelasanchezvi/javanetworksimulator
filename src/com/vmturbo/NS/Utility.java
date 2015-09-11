@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
+import com.vmturbo.NS.Link.LinkType;
+
 
 public class Utility {
 
@@ -93,28 +95,55 @@ public class Utility {
 
     public static Link[] addDuplexLink(Node n1, Node n2, String s1, String s2,
                                        ArrayList<Link> links) {
-        Link[] duplex = new Link[2];
+
+        /**
         if (n1 == null || n2 == null) {
             System.out.println("Utility.addDuplexLink: null pointer passed");
             return null;
-        }
-        int num = Utility.getMultiLinks(n1, n2, links).size();
-        int utilization, capacity;
+        }*/
 
-        utilization = Integer.parseInt(s1.split("/")[0]);
-        capacity = Integer.parseInt(s1.split("/")[1]);
-        Link link = new Link(n1, n2, capacity, utilization, null);
+        Link[] duplex = new Link[2];
+        Link link, rlink;
+        int num = Utility.getMultiLinks(n1, n2, links).size();
+
+        //create links and set link type
+        if (((n1 instanceof Host) && (n2 instanceof ToRSwitch)) ||
+            ((n2 instanceof Host) && (n1 instanceof ToRSwitch))) {
+            link = new Link(n1, n2, 0, 0, LinkType.HOSTTOTOR);
+            rlink = new Link(n2, n1, 0, 0, LinkType.HOSTTOTOR);
+        }
+        else if (((n1 instanceof ToRSwitch) && (n2 instanceof SpineSwitch)) ||
+                 ((n2 instanceof ToRSwitch) && (n1 instanceof SpineSwitch))) {
+            link = new Link(n1, n2, 0, 0, LinkType.TORTOSPINE);
+            rlink = new Link(n2, n1, 0, 0, LinkType.TORTOSPINE);
+        }
+        else {
+            return null;
+        }
+
+
+
+        //set utilization and capacity
+
+        double utilization, capacity;
+        utilization = Double.parseDouble(s1.split("/")[0]);
+        capacity = Double.parseDouble(s1.split("/")[1]);
+        link.setUtilization(utilization);
+        link.setCapacity(capacity);
         duplex[0] = link;
         links.add(link);
         n1.addOutgoingLink(link);
 
-        utilization = Integer.parseInt(s2.split("/")[0]);
-        capacity = Integer.parseInt(s2.split("/")[1]);
-        Link rlink = new Link(n2, n1, capacity, utilization, null);
+        utilization = Double.parseDouble(s2.split("/")[0]);
+        capacity = Double.parseDouble(s2.split("/")[1]);
+        rlink.setUtilization(utilization);
+        rlink.setCapacity(capacity);
         duplex[1] = rlink;
         links.add(rlink);
         n2.addOutgoingLink(rlink);
 
+
+        //set optional names
         if (num == 0) {
             link.setName(n1.getName() + "-" + n2.getName());
             rlink.setName(n2.getName() + "-" + n1.getName());
