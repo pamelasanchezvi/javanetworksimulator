@@ -72,15 +72,19 @@ public class TopologySetup {
         try {
             FileReader filereader = new FileReader(fileName);
             BufferedReader bufferedReader = new BufferedReader(filereader);
+
             while((line = bufferedReader.readLine()) != null){
                 String delims = ";";
                 StringTokenizer str = new StringTokenizer(line, delims);
                 while(str.hasMoreElements()){
                     switchname = str.nextToken().trim();
+                    System.out.println(" name " + switchname);
                     switchType = str.nextToken().trim();
                     neighborsLine = str.nextToken().trim();
+                    System.out.println("neigbrs : " + neighborsLine);
                 }
                 // error if name , type or neighbors line was null?
+
                 initSwitches(neighborsLine, switchType, switchname);
             }
             bufferedReader.close();
@@ -142,6 +146,7 @@ public class TopologySetup {
                     spineList.add(newspine);
                 }
                 // look for neighbors
+                System.out.println("calling  parseSpineNeighbors");
                 parseSpineNeighbors(linkPairs, newspine);
                 break;
             case "tor":
@@ -166,7 +171,7 @@ public class TopologySetup {
      *  adds new tor switches to spine object's torlist
      */
     private void parseSpineNeighbors(String linkp, SpineSwitch spswitch) {
-
+        System.out.println("linpairs in parseSpineNeighbors " + linkp);
         String delims = "|";
         StringTokenizer str = new StringTokenizer(neighborsLine, delims);
         while(str.hasMoreElements()){
@@ -192,8 +197,10 @@ public class TopologySetup {
             // case when there are more than one connections between a given spine and tor
             Link newlink = null;
             newlink = new Link(spswitch, nextTor, capacity, 0.0, Link.LinkType.TORTOSPINE);
+            System.out.println("created link TortoSpine ->" + spswitch.getName() + " to " +nextTor.getName());
             linkList.add(newlink);
             newlink = new Link(nextTor, spswitch, capacity, 0.0, Link.LinkType.TORTOSPINE);
+            System.out.println("created link TortoSpine ->"  + nextTor.getName() + " to " +spswitch.getName());
             linkList.add(newlink);
         }
 
