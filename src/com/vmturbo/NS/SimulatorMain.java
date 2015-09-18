@@ -18,8 +18,8 @@ public class SimulatorMain {
     ArrayList<FlowEvent> flowQueue;
 
 
-    private static String TOPOFILE = "input/symmetric-topology";
-    private static String QUEUEFILE = "input/flowqueue";
+    private static String TOPOFILE = "input/yy-topology";
+    private static String QUEUEFILE = "input/yy-flowqueue";
 
 
 
@@ -82,8 +82,8 @@ public class SimulatorMain {
 
 
                     //Path pathSelected = ecmp.recommendPath(flow);
-                    //Path pathSelected = RandomPlacement.randomPlacement(flow, allPaths);
-                    Path pathSelected = EconomicPlacement.econPlacement(flow, allPaths);
+                    Path pathSelected = RandomPlacement.randomPlacement(flow, allPaths);
+                    //Path pathSelected = EconomicPlacement.econPlacement(flow, allPaths);
                     System.out.println("path select" + pathSelected);
                     pathSelected.placeFlow(flow);
 

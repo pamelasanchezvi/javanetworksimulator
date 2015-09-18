@@ -38,13 +38,13 @@ public class Path {
 
     @Override
     public String toString() {
-        String s = "path: " + source.getName();
+        String s = "path: ";
         if (links == null || links.isEmpty()) {
-            s += " -> ";
+            s += source.getName() + " -> ";
         }
         else {
             for (Link link : links) {
-                s += " -> " + link.getDestNode().getName();
+                s += link + ",";
             }
         }
         return s;
@@ -68,6 +68,7 @@ public class Path {
         //quote of the path is the sum of link prices
         //link price is calculated as 1/(1-U)^2, U is percentage utilized of the link
         double quote = 0;
+        String quoteStr = "   ";
         for (Link link : links) {
             double bandwidthLeft = link.getCapacity() - link.getUtilization();
             if (demand >= bandwidthLeft) {
@@ -76,8 +77,26 @@ public class Path {
             double percentage = (demand + link.getUtilization()) / link.getCapacity();
             double linkPrice = 1 / Math.pow(1 - percentage, 2);
             quote += linkPrice;
+            /**
+            System.out.println("--" + link + "--");
+            System.out.println(demand + " " + link.getUtilization() + " " + link.getCapacity());
+            System.out.println(percentage);
+            */
+
+            /**
+            quoteStr += Utility.formatDouble(linkPrice, 6)
+                        //+ ","
+                        //+ demand + " "
+                        //+ link.getUtilization() + " "
+                        //+ link.getCapacity() + " "
+                        //+ Utility.formatDouble(percentage, 4)
+                        //+ "=1/(1-"
+                        //+ Utility.formatDouble(percentage, 3)
+                        //+ ")^2"
+                        + "; ";*/
         }
-        return (double)Math.round(quote * 100) / 100; //round it to two decimals
+        //System.out.println(quoteStr);
+        return Utility.formatDouble(quote, 4);
     }
 
 

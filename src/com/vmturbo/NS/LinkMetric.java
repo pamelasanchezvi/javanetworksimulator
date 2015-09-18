@@ -42,9 +42,12 @@ public class LinkMetric {
         double tempStdevTorSpine = 0;
 
         // calculate max and average link utilization
+        int numHT = 0;
+        int numTS = 0;
         for (Link link : linkList) {
             switch (link.getLinkType()) {
                 case HOSTTOTOR:
+                    numHT++;
                     tempUtil = link.getUtilization();
                     sumUtilHostTor += tempUtil;
                     if (maxHostTor < tempUtil) {
@@ -52,6 +55,7 @@ public class LinkMetric {
                     }
                     break;
                 case TORTOSPINE:
+                    numTS++;
                     tempUtil = link.getUtilization();
                     sumUtilTorSpine += tempUtil;
                     if (maxTorSpine < tempUtil) {
@@ -61,8 +65,8 @@ public class LinkMetric {
             }
         }
 
-        avgLinkUtilHosttoToR = sumUtilHostTor / linkList.size();
-        avgLinkUtilToRtoSpine = sumUtilTorSpine / linkList.size();
+        avgLinkUtilHosttoToR = sumUtilHostTor / numHT;
+        avgLinkUtilToRtoSpine = sumUtilTorSpine / numTS;
         maxLinkUtilHosttoToR = maxHostTor;
         maxLinkUtilToRtoSpine = maxTorSpine;
 
@@ -86,8 +90,8 @@ public class LinkMetric {
         }
 
         // calculate std dev
-        stdevLinkUtilHosttoToR = Math.sqrt(tempStdevHostTor / linkList.size());
-        stdevLinkUtilToRtoSpine = Math.sqrt(tempStdevTorSpine / linkList.size());
+        stdevLinkUtilHosttoToR = Math.sqrt(tempStdevHostTor / numHT);
+        stdevLinkUtilToRtoSpine = Math.sqrt(tempStdevTorSpine / numTS);
 
         aggr_stdevHT += stdevLinkUtilHosttoToR;
         aggr_stdevTS += stdevLinkUtilToRtoSpine;
@@ -121,6 +125,7 @@ public class LinkMetric {
     public void printMetrics(ArrayList<Link> linkList) {
 
         /**
+        System.out.println("total num of links: " + linkList.size());
         for (Link link : linkList) {
             System.out.println("Link: " + link.getSrcNode().getName()
                                + " -> "

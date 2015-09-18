@@ -76,7 +76,7 @@ public class Link implements Comparable<Link> {
         if (capac < 0) {
             return;
         }
-        this.capacity = Utility.formatDouble(capac, 2);
+        this.capacity = Utility.formatDouble(capac, 4);
     }
 
     public void setUtilization(double util) {
@@ -85,6 +85,7 @@ public class Link implements Comparable<Link> {
         }
         this.utilization = Utility.formatDouble(util, 2);
     }
+
 
     //optional name of the link,
     //so that we can distinguish parallel links between the same two nodes

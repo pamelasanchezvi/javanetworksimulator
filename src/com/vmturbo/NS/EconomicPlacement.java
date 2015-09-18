@@ -35,7 +35,7 @@ public class EconomicPlacement {
         int pathNo = 0;
         for (int i = 0; i < paths.size(); i++) {
             double quote = paths.get(i).getQuote(flow);
-            //System.out.println(quote);
+            //System.out.println(paths.get(i).toString() + quote + "\n");
             if (quote >= 0 && quote < minQuote) {//quote can be -1 if path can't accommodate flow
                 minQuote = quote;
                 pathNo = i;

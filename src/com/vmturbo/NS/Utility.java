@@ -26,8 +26,12 @@ public class Utility {
      */
     public static ArrayList<Link> getMultiLinks(Node n1, Node n2, Collection<Link> links) {
         ArrayList<Link> multiLinks = new ArrayList<>();
+        if (links == null)
+            return multiLinks;
+
         for (Link link : links) {
-            if (link.getSrcNode().equals(n1) &&
+            if (link != null &&
+                link.getSrcNode().equals(n1) &&
                 link.getDestNode().equals(n2)) {
                 multiLinks.add(link);
             }
@@ -35,7 +39,14 @@ public class Utility {
         return multiLinks;
     }
 
+    /**
+     * skip links with 0 utilization, can print links alphabetically
+     * @param links
+     * @param threshold: because comparing double with 0 is problematic, we use a threshold
+     */
     public static void printLinkUsage(ArrayList<Link> links, double threshold) {
+        if (links == null)
+            return;
         ArrayList<Link> localCopy = new ArrayList<>(links);
         Collections.sort(localCopy);
         for (Link link : localCopy) {
@@ -46,6 +57,16 @@ public class Utility {
 
     }
 
+    /**
+     * it takes care of everything, including:
+     * - create bidirectional links, and add it to the linkList
+     * - 
+     * @param n1
+     * @param n2
+     * @param capacities: 
+     * @param links
+     * @return
+     */
     public static int connectNodes(Node n1, Node n2, String[] capacities, ArrayList<Link> links) {
         boolean connect = false;
         if ((n1 instanceof Host) && (n2 instanceof ToRSwitch)) {
@@ -93,14 +114,21 @@ public class Utility {
 
     }
 
+    /**
+     * take care of all link-related matters, including
+     * - add the new links to the list of all links
+     * - take care "outGoingLinks" field of nodes 
+     * - give names to links
+     * @param n1 
+     * @param n2
+     * @param s1 "utilization/capacity" for the direction n1->n2, e.g. "3.0/10.0"
+     * @param s2 "utilization/capacity" for the direction n2->n1
+     * @param 
+     * @return array of size 2: duplex[0] is the forward link, duplex[1] is the reverse link
+     * can return null if input params are bad
+     */
     public static Link[] addDuplexLink(Node n1, Node n2, String s1, String s2,
                                        ArrayList<Link> links) {
-
-        /**
-        if (n1 == null || n2 == null) {
-            System.out.println("Utility.addDuplexLink: null pointer passed");
-            return null;
-        }*/
 
         Link[] duplex = new Link[2];
         Link link, rlink;
@@ -118,20 +146,25 @@ public class Utility {
             rlink = new Link(n2, n1, 0, 0, LinkType.TORTOSPINE);
         }
         else {
+            System.out.println("Utility.addDuplexLink: can't add link between " + n1 + " and " + n2);
             return null;
         }
 
-
-
-        //set utilization and capacity
-
+        //set utilization and capacity        
         double utilization, capacity;
+        if ((s1.split("/").length != 2) ||
+            (s2.split("/").length != 2)) {
+            System.out.println("Utility.addDuplexLink: bad format in params");
+            return null;
+        }
+
         utilization = Double.parseDouble(s1.split("/")[0]);
         capacity = Double.parseDouble(s1.split("/")[1]);
         link.setUtilization(utilization);
         link.setCapacity(capacity);
         duplex[0] = link;
-        links.add(link);
+        if (links != null)
+            links.add(link);
         n1.addOutgoingLink(link);
 
         utilization = Double.parseDouble(s2.split("/")[0]);
@@ -139,7 +172,8 @@ public class Utility {
         rlink.setUtilization(utilization);
         rlink.setCapacity(capacity);
         duplex[1] = rlink;
-        links.add(rlink);
+        if (links != null)
+            links.add(rlink);
         n2.addOutgoingLink(rlink);
 
 
@@ -186,6 +220,14 @@ public class Utility {
         prePathsList.add(pp1);
         prePathsList.add(pp2);
         printPrePaths(prePathsList);
+
+
+        Node tor1 = new ToRSwitch("tor1");
+        connectNodes(null, tor1, new String[] {"0|0"}, pp1);
+        addDuplexLink(n1, tor1, "0/1", "0/1", null);
+        printLinkUsage(null, 0.001);
+        pp1.add(null);
+        getMultiLinks(n1, n2, pp1);
 
     }
 }
