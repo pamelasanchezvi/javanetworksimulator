@@ -6,7 +6,6 @@ package com.vmturbo.NS.test;
 import java.util.ArrayList;
 
 import com.vmturbo.NS.ComputePaths;
-import com.vmturbo.NS.ECMPPlacement;
 import com.vmturbo.NS.EconomicPlacement;
 import com.vmturbo.NS.Flow;
 import com.vmturbo.NS.Host;
@@ -15,7 +14,6 @@ import com.vmturbo.NS.Path;
 import com.vmturbo.NS.SpineSwitch;
 import com.vmturbo.NS.ToRSwitch;
 import com.vmturbo.NS.Utility;
-
 
 
 public class ECMPTest {
@@ -27,6 +25,8 @@ public class ECMPTest {
         Host a = new Host("a");
         Host b = new Host("b");
         Host c = new Host("c");
+
+
 
         ToRSwitch tor1 = new ToRSwitch("1");
         ToRSwitch tor2 = new ToRSwitch("2");
@@ -52,40 +52,113 @@ public class ECMPTest {
         spines.add(spineC);
 
         //connect nodes
-        Utility.connectNodes(a, tor1, new String[] {"1|1"}, links);
-        Utility.connectNodes(b, tor2, new String[] {"1|1"}, links);
-        Utility.connectNodes(c, tor3, new String[] {"1|1"}, links);
+        String h_t = "100|100";
+        String t_s = "20|20";
+        Utility.connectNodes(a, tor1, new String[] {h_t}, links);
+        Utility.connectNodes(b, tor2, new String[] {h_t}, links);
+        Utility.connectNodes(c, tor3, new String[] {h_t}, links);
 
-        Utility.connectNodes(spineA, tor1, new String[] {"10|10", "10|10"}, links);
-        Utility.connectNodes(spineA, tor2, new String[] {"10|10"}, links);
-        Utility.connectNodes(spineA, tor3, new String[] {"10|10"}, links);
+        Utility.connectNodes(spineA, tor1, new String[] {t_s, t_s}, links);
+        Utility.connectNodes(spineA, tor2, new String[] {t_s}, links);
+        Utility.connectNodes(spineA, tor3, new String[] {t_s}, links);
 
-        Utility.connectNodes(spineB, tor1, new String[] {"10|10"}, links);
-        Utility.connectNodes(spineB, tor2, new String[] {"10|10", "10|10"}, links);
-        Utility.connectNodes(spineB, tor3, new String[] {"10|10"}, links);
+        Utility.connectNodes(spineB, tor1, new String[] {t_s}, links);
+        Utility.connectNodes(spineB, tor2, new String[] {t_s, t_s}, links);
+        Utility.connectNodes(spineB, tor3, new String[] {t_s}, links);
 
-        Utility.connectNodes(spineC, tor1, new String[] {"10|10"}, links);
-        Utility.connectNodes(spineC, tor2, new String[] {"10|10"}, links);
-        Utility.connectNodes(spineC, tor3, new String[] {"10|10", "10|10"}, links);
+        Utility.connectNodes(spineC, tor1, new String[] {t_s}, links);
+        Utility.connectNodes(spineC, tor2, new String[] {t_s}, links);
+        Utility.connectNodes(spineC, tor3, new String[] {t_s, t_s}, links);
 
+        /**
+        //===============run ECMP (n hosts to n hosts) =================
+        int numFlows = 12;
+        ArrayList<Host> as = new ArrayList<>();
+        for (int i = 0; i < numFlows; i++) {
+            Host h = new Host("a" + i);
+            Utility.connectNodes(h, tor1, new String[] {h_t}, links);
+            as.add(h);
+        }
 
+        ArrayList<Host> cs = new ArrayList<>();
+        for (int i = 0; i < numFlows; i++) {
+            Host h = new Host("c" + i);
+            Utility.connectNodes(h, tor3, new String[] {h_t}, links);
+            cs.add(h);
+        }
 
-        //run ECMP
+        hosts.addAll(as);
+        hosts.addAll(cs);
+
         ECMPPlacement ecmp = new ECMPPlacement(spines, tors, hosts, links);
+        //ecmp.printDistances();
+        for (int i = 0; i < numFlows; i++) {
+            Flow flow = new Flow(as.get(i), cs.get(i), 0, 10, 1);
+            Path path = ecmp.recommendPath(flow);
+            //System.out.println("\n"+ path + "\n");
+            path.placeFlow(flow);
+        }
+        */
+
+        /**
+        //===============run ECMP (1 host to 1 host) =================
+        ECMPPlacement ecmp = new ECMPPlacement(spines, tors, hosts, links);
+        //ecmp.printDistances();
+        for (int i = 0; i < 30; i++) {
+            Flow flow = new Flow(a, c, 0, 10, 1);
+            Path path = ecmp.recommendPath(flow);
+            path.placeFlow(flow);
+        }
+        */
+
+
+        /**
+        //==============run economic (n hosts to n hosts)================
+        int numFlows = 30;
+        ArrayList<Host> as = new ArrayList<>();
+        for (int i = 0; i < numFlows; i++) {
+            Host h = new Host("a" + i);
+            Utility.connectNodes(h, tor1, new String[] {"5|5"}, links);
+            as.add(h);
+        }
+
+        ArrayList<Host> cs = new ArrayList<>();
+        for (int i = 0; i < numFlows; i++) {
+            Host h = new Host("c" + i);
+            Utility.connectNodes(h, tor3, new String[] {"5|5"}, links);
+            cs.add(h);
+        }
+
+        hosts.addAll(as);
+        hosts.addAll(cs);
+
         ComputePaths cmp = new ComputePaths(spines, tors, hosts, links);
         cmp.findPaths();
-        //ecmp.printDistances();        
-        for (int i = 0; i < 30; i++) {
-            Flow flow = new Flow(a, c, 0, 10, 0.01);
-            Path path = EconomicPlacement.econPlacement(flow, cmp.getPaths(a, c));
-            //Path path = ecmp.recommendPath(flow);
+        for (int i = 0; i < numFlows; i++) {
+            Flow flow = new Flow(as.get(i), cs.get(i), 0, 10, 1);
+            Path path = EconomicPlacement.econPlacement(flow, cmp.getPaths(as.get(i), cs.get(i)));
+            //System.out.println("\n"+ path + "\n");
             path.placeFlow(flow);
-            //Utility.printLinkUsage(links, 0.0001);
         }
+        */
+
+        ///**
+        //==============run economic (1 host to 1 host)================
+        ComputePaths cmp = new ComputePaths(spines, tors, hosts, links);
+        cmp.findPaths();
+        for (int i = 0; i < 30; i++) {
+            Flow flow = new Flow(a, c, 0, 10, 1);
+            Path path = EconomicPlacement.econPlacement(flow, cmp.getPaths(a, c));
+            //System.out.println(path);
+            //System.out.println("=====================\n(" + i + ") " + path + "\n");
+
+            path.placeFlow(flow);
+        }
+        //*/
+
 
         Utility.printLinkUsage(links, 0.001);
 
 
     }
-
 }
