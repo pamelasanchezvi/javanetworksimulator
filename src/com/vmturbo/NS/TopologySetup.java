@@ -235,9 +235,13 @@ public class TopologySetup {
                         spineList.add(nextsp);
                     }
 
-                    torswitch.addSpine(nextsp); // check if spine already on list spine switched  in ToR object
+                    torswitch.addSpine(nextsp); // check if spine already on list spine switches  in ToR object
                     if ((newlink = linkSearch(torswitch.getName(), nextsp.getName())) == null){
                         newlink = new Link(torswitch, nextsp, capacity, 0.0, Link.LinkType.TORTOSPINE);
+                         linkList.add(newlink);
+                    }
+                    if ((newlink = linkSearch(nextsp.getName(),torswitch.getName())) == null){
+                        newlink = new Link(nextsp,torswitch, capacity, 0.0, Link.LinkType.TORTOSPINE);
                          linkList.add(newlink);
                     }
                     break;
