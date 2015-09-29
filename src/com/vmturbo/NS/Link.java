@@ -9,12 +9,19 @@ package com.vmturbo.NS;
  */
 public class Link implements Comparable<Link> {
 
-    private Node srcNode;
-    private Node destNode;
+    public Node srcNode;
+    public Node destNode;
     private double capacity;
     private double utilization;
     private LinkType type;
     private String name = "";
+
+    /**
+     * directions for gui
+     */
+    public boolean paint=false;
+
+
 
     public enum LinkType {
         HOSTTOTOR, TORTOSPINE

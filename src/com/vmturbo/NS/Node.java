@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.vmturbo.NS;
 
@@ -13,6 +13,14 @@ import java.util.ArrayList;
 public abstract class Node implements Comparable<Node> {
 
     protected String name;
+
+    /**
+     * coordinates for gui
+     */
+    public double x;
+    public double y;
+    public boolean paint=true;
+
     //should really be a Set, but since we are doing everything in ArrayList...
     protected ArrayList<Link> outgoingLinks = new ArrayList<>();
 
