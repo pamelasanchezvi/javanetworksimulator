@@ -1,26 +1,30 @@
 /**
- * @author shangshangchen
+ *
  */
 package com.vmturbo.NS.test;
 
 import java.util.ArrayList;
 
 import com.vmturbo.NS.ComputePaths;
-import com.vmturbo.NS.EconomicPlacement;
-import com.vmturbo.NS.ECMPPlacement;
+import com.vmturbo.NS.MinMaxPlacement;
 import com.vmturbo.NS.Flow;
 import com.vmturbo.NS.Host;
 import com.vmturbo.NS.Link;
-import com.vmturbo.NS.Path;
 import com.vmturbo.NS.SpineSwitch;
 import com.vmturbo.NS.ToRSwitch;
 import com.vmturbo.NS.Utility;
 
+/**
+ * @author pamelasanchez
+ *
+ */
+public class MinMaxTests {
 
-public class ECMPTest {
-
+    /**
+     * @param args
+     */
     public static void main(String[] args) {
-
+        // TODO Auto-generated method stub
         //create 3 types of nodes
 
         Host a = new Host("a");
@@ -104,7 +108,7 @@ public class ECMPTest {
         }
         */
 
-        
+        /**
         //===============run ECMP (1 host to 1 host) =================
         ECMPPlacement ecmp = new ECMPPlacement(spines, tors, hosts, links);
         //ecmp.printDistances();
@@ -113,7 +117,7 @@ public class ECMPTest {
             Path path = ecmp.recommendPath(flow);
             path.placeFlow(flow);
         }
-        
+        */
 
 
         /**
@@ -146,26 +150,21 @@ public class ECMPTest {
         }
         */
 
+        Utility.printLinkUsage(links, 0.001);
         /**
-        ==============run economic (1 host to 1 host)================
+         * run minmax
+         */
         ComputePaths cmp = new ComputePaths(spines, tors, hosts, links);
         cmp.findPaths();
         for (int i = 0; i < 30; i++) {
             Flow flow = new Flow(a, c, 0, 10, 1);
             flowlist.add(flow);
-            Path path = EconomicPlacement.econPlacement(flow, cmp.getPaths(a, c));
-            //System.out.println(path);
-            //System.out.println("=====================\n(" + i + ") " + path + "\n");
-
-            path.placeFlow(flow);
         }
-        */
-
-
+        MinMaxPlacement.minmaxPlacement(flowlist, cmp.getPaths(a, c));
         Utility.printLinkUsage(links, 0.001);
-
-
-
-
     }
+
+
+
+
 }
