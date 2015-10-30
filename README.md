@@ -1,5 +1,5 @@
 # javanetworksimulator
-
+# checking push
 Input > topology
 Format: 
 switch name; type of switch; neighbor1, link capacity |  neighbor2, link capacity | ...
